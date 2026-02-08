@@ -1,4 +1,4 @@
-1770660053999
+3541227322174
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62670,6 +62670,13 @@ heatsink
 0
 0
 0
+Imports
+128x64OLED
+
+
+0
+4
+4
 Imports
 THB001P_CNK
 
