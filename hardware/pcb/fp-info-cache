@@ -1,4 +1,4 @@
-3541227322174
+5311829074951
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -62677,6 +62677,13 @@ Imports
 0
 4
 4
+Imports
+QFN-18_MP2672A_MNP
+
+MP2672AGD-0000-Z 
+0
+18
+18
 Imports
 THB001P_CNK
 
