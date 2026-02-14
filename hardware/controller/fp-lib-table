@@ -1,4 +1,3 @@
 (fp_lib_table
   (version 7)
-  (lib (name "controller")(type "KiCad")(uri "/home/william/remote-controller/pcb/controller.pretty")(options "")(descr ""))
 )

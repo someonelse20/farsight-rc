@@ -37,9 +37,9 @@
         "other_text_thickness": 0.15,
         "other_text_upright": false,
         "pads": {
-          "drill": 0.0,
-          "height": 1.2,
-          "width": 1.0
+          "drill": 1.7,
+          "height": 2.5,
+          "width": 2.5
         },
         "silk_line_width": 0.1,
         "silk_text_italic": false,
@@ -58,7 +58,28 @@
           "width": 0.0
         }
       ],
-      "drc_exclusions": [],
+      "drc_exclusions": [
+        [
+          "clearance|143390000|110850000|f0f3290c-784e-4b3a-befa-cb24d666e21b|109398dc-3956-4ecb-a860-91231d3eb1fb",
+          ""
+        ],
+        [
+          "hole_clearance|132830000|153670000|12eea043-f002-4954-abb5-6025ca558d76|8ec10863-8331-464c-b160-82bcd3c4dbfe",
+          ""
+        ],
+        [
+          "hole_clearance|132830000|153670000|12eea043-f002-4954-abb5-6025ca558d76|bf42da96-4e14-4f31-8055-a265d8b79dc9",
+          ""
+        ],
+        [
+          "hole_clearance|138930000|153670000|0e3e9b71-35b9-4cd2-beee-d020250d93a3|58280a26-9abb-4067-9e87-a8ca586ca859",
+          ""
+        ],
+        [
+          "hole_clearance|138930000|153670000|0e3e9b71-35b9-4cd2-beee-d020250d93a3|692b9cb5-d162-450e-a8a9-620ed10dffa7",
+          ""
+        ]
+      ],
       "meta": {
         "version": 2
       },
@@ -231,6 +252,10 @@
         {
           "diameter": 0.6,
           "drill": 0.3
+        },
+        {
+          "diameter": 0.8,
+          "drill": 0.4
         }
       ],
       "zones_allow_external_fillets": false
@@ -505,7 +530,12 @@
     },
     "net_colors": null,
     "netclass_assignments": null,
-    "netclass_patterns": []
+    "netclass_patterns": [
+      {
+        "netclass": "Default",
+        "pattern": "GND"
+      }
+    ]
   },
   "pcbnew": {
     "last_paths": {
