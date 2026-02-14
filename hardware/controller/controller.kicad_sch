@@ -7578,7 +7578,7 @@
 	)
 	(text "Regulator"
 		(exclude_from_sim no)
-		(at 294.132 15.748 0)
+		(at 288.036 14.986 0)
 		(effects
 			(font
 				(size 2.54 2.54)
