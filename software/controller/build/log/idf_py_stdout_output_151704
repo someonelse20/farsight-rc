@@ -1,0 +1,41 @@
+Command: ninja all
+[1/10] Performing build step for 'bootloader'
+[1/1] cd /home/william/Documents/remote-controller/software/controller/build/bootloader/esp-idf/esptool_py && /home/william/.espressif/python_env/idf5.5_py3.14_env/bin/python /opt/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /home/william/Documents/remote-controller/software/controller/build/bootloader/bootloader.bin
+Bootloader binary size 0x66c0 bytes. 0x940 bytes (8%) free.
+[2/10] No install step for 'bootloader'
+[3/10] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/softap.c.obj
+FAILED: [code=1] esp-idf/main/CMakeFiles/__idf_main.dir/softap.c.obj 
+/home/william/.espressif/tools/xtensa-esp-elf/esp-14.2.0_20251107/xtensa-esp-elf/bin/xtensa-esp32-elf-gcc -DESP_PLATFORM -DIDF_VER=\"HEAD-HASH-NOTFOUND\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -D_POSIX_READER_WRITER_LOCKS -I/home/william/Documents/remote-controller/software/controller/build/config -I/home/william/Documents/remote-controller/software/controller/main -I/home/william/Documents/remote-controller/software/controller/main/include -I/opt/esp-idf/components/newlib/platform_include -I/opt/esp-idf/components/freertos/config/include -I/opt/esp-idf/components/freertos/config/include/freertos -I/opt/esp-idf/components/freertos/config/xtensa/include -I/opt/esp-idf/components/freertos/FreeRTOS-Kernel/include -I/opt/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include -I/opt/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos -I/opt/esp-idf/components/freertos/esp_additions/include -I/opt/esp-idf/components/esp_hw_support/include -I/opt/esp-idf/components/esp_hw_support/include/soc -I/opt/esp-idf/components/esp_hw_support/include/soc/esp32 -I/opt/esp-idf/components/esp_hw_support/dma/include -I/opt/esp-idf/components/esp_hw_support/ldo/include -I/opt/esp-idf/components/esp_hw_support/debug_probe/include -I/opt/esp-idf/components/esp_hw_support/mspi_timing_tuning/include -I/opt/esp-idf/components/esp_hw_support/mspi_timing_tuning/tuning_scheme_impl/include -I/opt/esp-idf/components/esp_hw_support/power_supply/include -I/opt/esp-idf/components/esp_hw_support/port/esp32/. -I/opt/esp-idf/components/esp_hw_support/port/esp32/include -I/opt/esp-idf/components/heap/include -I/opt/esp-idf/components/heap/tlsf -I/opt/esp-idf/components/log/include -I/opt/esp-idf/components/soc/include -I/opt/esp-idf/components/soc/esp32 -I/opt/esp-idf/components/soc/esp32/include -I/opt/esp-idf/components/soc/esp32/register -I/opt/esp-idf/components/hal/platform_port/include -I/opt/esp-idf/components/hal/esp32/include -I/opt/esp-idf/components/hal/include -I/opt/esp-idf/components/esp_rom/include -I/opt/esp-idf/components/esp_rom/esp32/include -I/opt/esp-idf/components/esp_rom/esp32/include/esp32 -I/opt/esp-idf/components/esp_rom/esp32 -I/opt/esp-idf/components/esp_common/include -I/opt/esp-idf/components/esp_system/include -I/opt/esp-idf/components/esp_system/port/soc -I/opt/esp-idf/components/esp_system/port/include/private -I/opt/esp-idf/components/xtensa/esp32/include -I/opt/esp-idf/components/xtensa/include -I/opt/esp-idf/components/xtensa/deprecated_include -I/opt/esp-idf/components/lwip/include -I/opt/esp-idf/components/lwip/include/apps -I/opt/esp-idf/components/lwip/include/apps/sntp -I/opt/esp-idf/components/lwip/lwip/src/include -I/opt/esp-idf/components/lwip/port/include -I/opt/esp-idf/components/lwip/port/freertos/include -I/opt/esp-idf/components/lwip/port/esp32xx/include -I/opt/esp-idf/components/lwip/port/esp32xx/include/arch -I/opt/esp-idf/components/lwip/port/esp32xx/include/sys -I/opt/esp-idf/components/esp_wifi/include -I/opt/esp-idf/components/esp_wifi/include/local -I/opt/esp-idf/components/esp_wifi/wifi_apps/include -I/opt/esp-idf/components/esp_wifi/wifi_apps/nan_app/include -I/opt/esp-idf/components/esp_event/include -I/opt/esp-idf/components/esp_phy/include -I/opt/esp-idf/components/esp_phy/esp32/include -I/opt/esp-idf/components/esp_netif/include -I/opt/esp-idf/components/nvs_flash/include -I/opt/esp-idf/components/esp_partition/include -I/opt/esp-idf/examples/common_components/protocol_examples_common/include -mlongcalls -Wno-frame-address  -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-bzero -fno-builtin-stpcpy -fno-builtin-strncpy -fdiagnostics-color=always -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-error=extra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -Og -fno-shrink-wrap -fmacro-prefix-map=/home/william/Documents/remote-controller/software/controller=. -fmacro-prefix-map=/opt/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/main/CMakeFiles/__idf_main.dir/softap.c.obj -MF esp-idf/main/CMakeFiles/__idf_main.dir/softap.c.obj.d -o esp-idf/main/CMakeFiles/__idf_main.dir/softap.c.obj -c /home/william/Documents/remote-controller/software/controller/main/softap.c
+/home/william/Documents/remote-controller/software/controller/main/softap.c: In function 'wifi_init_softap':
+/home/william/Documents/remote-controller/software/controller/main/softap.c:28:36: error: 'CONFIG_ESP_WIFI_SSID' undeclared (first use in this function); did you mean 'CONFIG_EXAMPLE_WIFI_SSID'?
+   28 | #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
+      |                                    ^~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:70:21: note: in expansion of macro 'EXAMPLE_ESP_WIFI_SSID'
+   70 |             .ssid = EXAMPLE_ESP_WIFI_SSID,
+      |                     ^~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:28:36: note: each undeclared identifier is reported only once for each function it appears in
+   28 | #define EXAMPLE_ESP_WIFI_SSID      CONFIG_ESP_WIFI_SSID
+      |                                    ^~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:70:21: note: in expansion of macro 'EXAMPLE_ESP_WIFI_SSID'
+   70 |             .ssid = EXAMPLE_ESP_WIFI_SSID,
+      |                     ^~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:30:36: error: 'CONFIG_ESP_WIFI_CHANNEL' undeclared (first use in this function); did you mean 'CONFIG_ESP_WIFI_ENABLED'?
+   30 | #define EXAMPLE_ESP_WIFI_CHANNEL   CONFIG_ESP_WIFI_CHANNEL
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:72:24: note: in expansion of macro 'EXAMPLE_ESP_WIFI_CHANNEL'
+   72 |             .channel = EXAMPLE_ESP_WIFI_CHANNEL,
+      |                        ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:29:36: error: 'CONFIG_ESP_WIFI_PASSWORD' undeclared (first use in this function); did you mean 'CONFIG_EXAMPLE_WIFI_PASSWORD'?
+   29 | #define EXAMPLE_ESP_WIFI_PASS      CONFIG_ESP_WIFI_PASSWORD
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:73:25: note: in expansion of macro 'EXAMPLE_ESP_WIFI_PASS'
+   73 |             .password = EXAMPLE_ESP_WIFI_PASS,
+      |                         ^~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:31:36: error: 'CONFIG_ESP_MAX_STA_CONN' undeclared (first use in this function)
+   31 | #define EXAMPLE_MAX_STA_CONN       CONFIG_ESP_MAX_STA_CONN
+      |                                    ^~~~~~~~~~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/softap.c:74:31: note: in expansion of macro 'EXAMPLE_MAX_STA_CONN'
+   74 |             .max_connection = EXAMPLE_MAX_STA_CONN,
+      |                               ^~~~~~~~~~~~~~~~~~~~
+[4/10] Completed 'bootloader'
+ninja: build stopped: subcommand failed.

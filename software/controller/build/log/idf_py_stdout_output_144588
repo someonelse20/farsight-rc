@@ -1,0 +1,25 @@
+Command: ninja all
+[1/10] Performing build step for 'bootloader'
+[1/1] cd /home/william/Documents/remote-controller/software/controller/build/bootloader/esp-idf/esptool_py && /home/william/.espressif/python_env/idf5.5_py3.14_env/bin/python /opt/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x1000 /home/william/Documents/remote-controller/software/controller/build/bootloader/bootloader.bin
+Bootloader binary size 0x66c0 bytes. 0x940 bytes (8%) free.
+[2/10] No install step for 'bootloader'
+[3/10] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/controller.c.obj
+In file included from /home/william/Documents/remote-controller/software/controller/main/controller.c:7:
+/home/william/Documents/remote-controller/software/controller/main/include/http_server.h:23:18: warning: 'stop_webserver' declared 'static' but never defined [-Wunused-function]
+   23 | static esp_err_t stop_webserver(httpd_handle_t server);
+      |                  ^~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/include/http_server.h:25:13: warning: 'connect_handler' used but never defined
+   25 | static void connect_handler(void* arg, esp_event_base_t event_base,
+      |             ^~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/include/http_server.h:28:13: warning: 'disconnect_handler' used but never defined
+   28 | static void disconnect_handler(void* arg, esp_event_base_t event_base,
+      |             ^~~~~~~~~~~~~~~~~~
+[4/10] Completed 'bootloader'
+[5/10] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/http_server.c.obj
+/home/william/Documents/remote-controller/software/controller/main/http_server.c:489:13: warning: 'connect_handler' defined but not used [-Wunused-function]
+  489 | static void connect_handler(void* arg, esp_event_base_t event_base,
+      |             ^~~~~~~~~~~~~~~
+/home/william/Documents/remote-controller/software/controller/main/http_server.c:475:13: warning: 'disconnect_handler' defined but not used [-Wunused-function]
+  475 | static void disconnect_handler(void* arg, esp_event_base_t event_base,
+      |             ^~~~~~~~~~~~~~~~~~
+[6/10] Linking C static library esp-idf/main/libmain.a

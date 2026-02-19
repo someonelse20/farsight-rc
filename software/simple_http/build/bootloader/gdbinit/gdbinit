@@ -1,0 +1,2 @@
+source /home/william/Documents/remote-controller/software/simple_http/build/bootloader/gdbinit/symbols
+source /home/william/Documents/remote-controller/software/simple_http/build/bootloader/gdbinit/connect
