@@ -4,9 +4,11 @@
 struct telemetry_struct {
 	double altitude;
 	double speed;
-	double headding;
+	double heading;
 	double latitude;
 	double longitude;
-} telemetry;
+};
+
+char* get_telemetry(void);
 
 #endif // CONTROLLER_H

@@ -3,8 +3,35 @@
 #include "nvs_flash.h"
 #include "esp_log.h"
 
+#include "controller.h"
 #include "http_server.h"
 #include "softap.h"
+
+struct telemetry_struct telemetry = {102.6, 10.2, -40.6, 32.8, -64.2};
+
+char* get_telemetry() {
+	// Allocate memory for the string (approximately 256 bytes should be enough)
+    char* result = malloc(512 * sizeof(char));
+    if (result == NULL) {
+        return NULL; // Memory allocation failed
+    }
+    
+    // Format the string with all values separated by commas
+    int len = snprintf(result, 512, "%.10f,%.10f,%.10f,%.10f,%.10f",
+                       telemetry.altitude,
+                       telemetry.speed,
+                       telemetry.heading,
+                       telemetry.latitude,
+                       telemetry.longitude);
+    
+    // Check if snprintf succeeded
+    if (len < 0 || len >= 512) {
+        free(result);
+        return NULL;
+    }
+    
+    return result;
+}
 
 void app_main(void)
 {
