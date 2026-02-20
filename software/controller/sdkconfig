@@ -432,7 +432,7 @@ CONFIG_PARTITION_TABLE_MD5=y
 # end of Partition Table
 
 #
-# Example Configuration
+# Wifi Configuration
 #
 CONFIG_ESP_WIFI_SSID="myssid"
 CONFIG_ESP_WIFI_PASSWORD="mypassword"
@@ -441,7 +441,15 @@ CONFIG_ESP_MAX_STA_CONN=4
 CONFIG_ESP_GTK_REKEYING_ENABLE=y
 CONFIG_ESP_GTK_REKEY_INTERVAL=600
 # CONFIG_EXAMPLE_ENABLE_SSE_HANDLER is not set
-# end of Example Configuration
+# end of Wifi Configuration
+
+#
+# I2C Configuration
+#
+CONFIG_I2C_MASTER_SCL=4
+CONFIG_I2C_MASTER_SDA=5
+CONFIG_I2C_MASTER_FREQUENCY=400000
+# end of I2C Configuration
 
 #
 # Example Connection Configuration

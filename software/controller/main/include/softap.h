@@ -11,6 +11,6 @@
  */
 void wifi_init_softap(void);
 
-static const char *TAG = "wifi softAP";
+static const char *AP_TAG = "wifi softAP";
 
 #endif // WIFI_SOFTAP_H

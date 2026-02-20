@@ -1,4 +1,4 @@
-menu "Example Configuration"
+menu "Wifi Configuration"
 
     config ESP_WIFI_SSID
         string "WiFi SSID"
@@ -44,5 +44,31 @@ menu "Example Configuration"
         help
             Enable this option to use Server-Sent Events (SSE) functionality.
             This will allow the server to push real-time updates to the client over an HTTP connection.
+
+endmenu
+
+menu "I2C Configuration"
+
+	# orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
+
+    config I2C_MASTER_SCL
+        int "SCL GPIO Num"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 4
+        help
+            GPIO number for I2C Master clock line.
+
+    config I2C_MASTER_SDA
+        int "SDA GPIO Num"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 5
+        help
+            GPIO number for I2C Master data line.
+
+    config I2C_MASTER_FREQUENCY
+        int "Master Frequency"
+        default 400000
+        help
+            I2C Speed of Master device.
 
 endmenu
