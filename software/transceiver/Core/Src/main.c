@@ -22,6 +22,15 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
+#include <stdint.h>
+#include <unistd.h>
+#include "stm32u585xx.h"
+#include "stm32u5xx_hal_gpio.h"
+#include "stm32u5xx_hal_spi.h"
+#include "stm32u5xx_hal_uart.h"
+#include "sx126x.h"
+#include "sx126x_hal.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -47,6 +56,10 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
+// TODO: Figure out what const void *context is.
+// I think it's to allow using multiple radio modules.
+const void *rf_context = 0;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -56,6 +69,8 @@ static void MX_SPI1_Init(void);
 static void MX_USART1_UART_Init(void);
 static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
+
+static void SX126x_INIT(void);
 
 /* USER CODE END PFP */
 
@@ -98,6 +113,8 @@ int main(void)
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
 
+  SX126x_INIT();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -107,6 +124,31 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+	const char* message = "Hello World!";
+	uint8_t data[sizeof(message)];
+
+	// Convert char array to uint8_t array.
+	for (size_t i = 0; i < sizeof(message); i++) {
+		data[i] = (uint8_t) message[i];
+	}
+
+	uint8_t *buf = data;
+
+	// Write data to TX buffer.
+	sx126x_write_buffer(rf_context, 0, buf, sizeof(buf));
+
+	// Transmit data with a 1s timeout.
+	sx126x_set_tx(rf_context, 1000);
+
+	// Receive data with a 1s timeout.
+	sx126x_set_rx(rf_context, 1000);
+
+	// Read RX buffer data.
+	sx126x_read_buffer(rf_context, 0, buf, sizeof(buf));
+
+	// Print RX data to uart connection;
+	HAL_UART_Transmit(&huart1, buf, sizeof(buf), 100);
   }
   /* USER CODE END 3 */
 }
@@ -329,6 +371,76 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
+
+static void SX126x_INIT(void) {
+	sx126x_set_dio2_as_rf_sw_ctrl(rf_context, true);
+
+	// Set packet type as lora.
+	sx126x_set_pkt_type(rf_context, SX126X_PKT_TYPE_LORA);
+	
+	// Set 915MHz, 22dBm, 20us pa ram time.
+	sx126x_set_rf_freq(rf_context, 915000);
+	sx126x_set_tx_params(rf_context, 22, SX126X_RAMP_20_US);
+
+	sx126x_mod_params_lora_t lora_mod_params = {
+		7, // Spreading factor set low-ish to increase datarate but reduce range.
+		4, // Bandwidth set to 125.
+		7, // Coding rate set to 4/8 for best error correction.
+		0  // Low datarate optimization off because of thermal concerns. NOTE: Check to see of this is needed.
+	};
+	sx126x_set_lora_mod_params(rf_context, &lora_mod_params);
+
+	sx126x_pkt_params_lora_t lora_pkt_params = {
+		8, // Preamble set to 8 symbols.
+		0, // Variable packet length.
+		0xFF, // Payload size set to max. I don't think this does anything if set with varable packet length.
+		1, // Enable cyclical redundancy check.
+		0, // IQ setup set to standard.
+	};
+	sx126x_set_lora_pkt_params(rf_context, &lora_pkt_params);
+
+	// Set rx timeout to 8 symbols.
+	sx126x_set_lora_symb_nb_timeout(rf_context, 8);
+}
+
+/* SX126X hal funcion definitions --------------------------------------------*/
+sx126x_hal_status_t sx126x_hal_write( const void* context, const uint8_t* command, const uint16_t command_length,
+                                      const uint8_t* data, const uint16_t data_length ) {
+	uint8_t writeBuf[2];
+	writeBuf[0] = (int) command; // |0x40;  // multibyte write enabled
+	writeBuf[1] = (int) data;
+	HAL_SPI_Transmit (&hspi1, writeBuf, 2, 100);  // transmit the address and data
+
+	return 0;
+}
+
+sx126x_hal_status_t sx126x_hal_read( const void* context, const uint8_t* command, const uint16_t command_length,
+                                     uint8_t* data, const uint16_t data_length ) {
+	/*
+	uint8_t reg = (int) command;
+	reg |= 0x80;  // read operation
+	reg |= 0x40;  // multibyte read
+	HAL_SPI_Transmit (&hspi1, &reg, 1, 100);  // send the address from where you want to read data
+	*/
+	HAL_SPI_Transmit (&hspi1, command, 1, 100);  // send the address from where you want to read data
+	HAL_SPI_Receive (&hspi1, data, data_length, 100);  // read 6 BYTES of data
+
+	return 0;
+}
+
+sx126x_hal_status_t sx126x_hal_reset( const void* context ) {
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	usleep(150);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+	return 0;
+}
+
+sx126x_hal_status_t sx126x_hal_wakeup( const void* context ) {
+	// Send dummy data to sx1262 to pull NSS low which will wake it up.
+	uint8_t data = 0;
+	HAL_SPI_Transmit(&hspi1, &data, 1, 100);
+	return 0;
+}
 
 /* USER CODE END 4 */
 
