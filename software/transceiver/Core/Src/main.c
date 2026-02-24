@@ -23,6 +23,7 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdint.h>
+#include <stdio.h>
 #include <unistd.h>
 #include "stm32u585xx.h"
 #include "stm32u5xx_hal_gpio.h"
@@ -125,7 +126,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	const char* message = "Hello World!";
+	char* message = "Hello World!";
 	uint8_t data[sizeof(message)];
 
 	// Convert char array to uint8_t array.
@@ -147,8 +148,14 @@ int main(void)
 	// Read RX buffer data.
 	sx126x_read_buffer(rf_context, 0, buf, sizeof(buf));
 
-	// Print RX data to uart connection;
+	// Print RX data.
 	HAL_UART_Transmit(&huart1, buf, sizeof(buf), 100);
+
+	// convert uint8_t array to char array.
+	for (size_t i = 0; i < sizeof(buf); i++) {
+		message[i] = (char) buf[i];
+	}
+	printf("%s", message);
   }
   /* USER CODE END 3 */
 }
