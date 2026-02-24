@@ -545,7 +545,7 @@
       "plot": "",
       "pos_files": "",
       "specctra_dsn": "",
-      "step": "../cad/controller.step",
+      "step": "../cad/pcb.step",
       "svg": "",
       "vrml": ""
     },
