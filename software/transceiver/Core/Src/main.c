@@ -84,11 +84,23 @@ typedef struct settings_s {
 } settings_t;
 
 settings_t default_settings = {
-    915000, 8, 22, SX126X_RAMP_20_US, SX126X_LORA_SF7, SX126X_LORA_BW_125,
+    915000,
+    8,
+    22,
+    SX126X_RAMP_20_US,
+    SX126X_LORA_SF7,
+    SX126X_LORA_BW_125,
     SX126X_LORA_CR_4_8,
     0, // NOTE: Check to see if disabling low data rate optimization is needed
        // for thermal performance.
-    SX126X_LORA_PKT_EXPLICIT, 0xFF, 8, SX126X_SLEEP_CFG_COLD_START, 1, 0};
+    SX126X_LORA_PKT_EXPLICIT,
+    0xFF, // NOTE: I'm not sure if this is needed because packet type is
+          // explicit.
+    8,
+    SX126X_SLEEP_CFG_COLD_START,
+    1,
+    0,
+};
 
 settings_t *global_settings;
 
@@ -102,7 +114,6 @@ static void MX_USART1_UART_Init(void);
 static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
 
-static void SX126x_INIT(void);
 static void lora_tx_rx(uint8_t *data);
 static void lora_set_config(settings_t *settings);
 
