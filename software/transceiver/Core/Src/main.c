@@ -23,9 +23,10 @@
 /* USER CODE BEGIN Includes */
 
 #include <stdint.h>
-#include <stdio.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include "stm32u585xx.h"
+#include "stm32u5xx_hal_def.h"
 #include "stm32u5xx_hal_gpio.h"
 #include "stm32u5xx_hal_spi.h"
 #include "stm32u5xx_hal_uart.h"
@@ -41,6 +42,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
+
+#define BUFFER_SIZE 32
 
 /* USER CODE END PD */
 
@@ -61,6 +64,23 @@ UART_HandleTypeDef huart1;
 // I think it's to allow using multiple radio modules.
 const void *rf_context = 0;
 
+uint8_t *buf;
+
+typedef struct settings_s {
+	uint32_t frequency;
+	uint16_t preamble_len;
+	uint8_t power;
+	uint8_t ramptime;
+	uint8_t spreading_factor;
+	uint8_t bandwidth;
+	uint8_t coding_rate;
+	uint8_t low_datarate_optimization;
+	uint8_t header_type;
+	uint8_t payload_len;
+	bool crq_en;
+	bool invert_iq;
+} settings_t;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -72,6 +92,8 @@ static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
 
 static void SX126x_INIT(void);
+static void lora_tx_rx(uint8_t *data);
+static void lora_set_config(uint8_t *data);
 
 /* USER CODE END PFP */
 
@@ -126,36 +148,23 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	char* message = "Hello World!";
-	uint8_t data[sizeof(message)];
+	// Receive data and leave one extra byte at the end for commands with a 500ms timeout.
+	HAL_UART_Receive(&huart1, buf, BUFFER_SIZE + 1, 500);
 
-	// Convert char array to uint8_t array.
-	for (size_t i = 0; i < sizeof(message); i++) {
-		data[i] = (uint8_t) message[i];
+	uint8_t command = buf[32];
+
+	// Create new data array without command byte.
+	uint8_t data[BUFFER_SIZE];
+	for (int i = 0; i < BUFFER_SIZE; i++) {
+		data[i] = buf[i];
 	}
 
-	uint8_t *buf = data;
-
-	// Write data to TX buffer.
-	sx126x_write_buffer(rf_context, 0, buf, sizeof(buf));
-
-	// Transmit data with a 1s timeout.
-	sx126x_set_tx(rf_context, 1000);
-
-	// Receive data with a 1s timeout.
-	sx126x_set_rx(rf_context, 1000);
-
-	// Read RX buffer data.
-	sx126x_read_buffer(rf_context, 0, buf, sizeof(buf));
-
-	// Print RX data.
-	HAL_UART_Transmit(&huart1, buf, sizeof(buf), 100);
-
-	// convert uint8_t array to char array.
-	for (size_t i = 0; i < sizeof(buf); i++) {
-		message[i] = (char) buf[i];
+	// If command byte is 0 perform normal radio operation.
+	if (command == 0) {
+		lora_tx_rx(data);
+	} else if (command == 3) { // Set radio settings.
+		
 	}
-	printf("%s", message);
   }
   /* USER CODE END 3 */
 }
@@ -357,19 +366,26 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_9, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0|GPIO_PIN_9, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : PB0 PB2 PB9 */
-  GPIO_InitStruct.Pin = GPIO_PIN_0|GPIO_PIN_2|GPIO_PIN_9;
+  /*Configure GPIO pin : PB0 */
+  GPIO_InitStruct.Pin = GPIO_PIN_0;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : PB1 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1;
+  /*Configure GPIO pins : PB1 PB2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB9 */
+  GPIO_InitStruct.Pin = GPIO_PIN_9;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
@@ -410,43 +426,91 @@ static void SX126x_INIT(void) {
 	sx126x_set_lora_symb_nb_timeout(rf_context, 8);
 }
 
+static void lora_tx_rx(uint8_t *data) {
+	// Write data to TX buffer.
+	sx126x_write_buffer(rf_context, 0, data, BUFFER_SIZE);
+
+	// Transmit data with a 1s timeout.
+	sx126x_set_tx(rf_context, 1000);
+
+	// Receive data with a 1s timeout.
+	sx126x_set_rx(rf_context, 1000);
+
+	// Read RX buffer data.
+	sx126x_read_buffer(rf_context, 0, data, BUFFER_SIZE);
+
+	// Print RX data.
+	HAL_UART_Transmit(&huart1, data, BUFFER_SIZE, 100);
+}
+
+static void lora_set_config(uint8_t *data) {
+	settings_t* settings = (struct settings_t *) &data;
+
+
+}
+
 /* SX126X hal funcion definitions --------------------------------------------*/
 sx126x_hal_status_t sx126x_hal_write( const void* context, const uint8_t* command, const uint16_t command_length,
                                       const uint8_t* data, const uint16_t data_length ) {
-	uint8_t writeBuf[2];
-	writeBuf[0] = (int) command; // |0x40;  // multibyte write enabled
-	writeBuf[1] = (int) data;
-	HAL_SPI_Transmit (&hspi1, writeBuf, 2, 100);  // transmit the address and data
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;;
+	}
 
-	return 0;
+	uint8_t buf[command_length + data_length];
+	for (int i = 0; i < command_length; i++) {
+		buf[i] = command[i];
+	}
+	for (int i = 0; i < data_length; i++) {
+		buf[i] = data[i];
+	}
+
+	if (HAL_SPI_Transmit(&hspi1, buf, command_length + data_length, 100) == HAL_OK) {
+		return SX126X_HAL_STATUS_OK;
+	} else {
+		return SX126X_HAL_STATUS_ERROR;
+	}
 }
 
 sx126x_hal_status_t sx126x_hal_read( const void* context, const uint8_t* command, const uint16_t command_length,
                                      uint8_t* data, const uint16_t data_length ) {
-	/*
-	uint8_t reg = (int) command;
-	reg |= 0x80;  // read operation
-	reg |= 0x40;  // multibyte read
-	HAL_SPI_Transmit (&hspi1, &reg, 1, 100);  // send the address from where you want to read data
-	*/
-	HAL_SPI_Transmit (&hspi1, command, 1, 100);  // send the address from where you want to read data
-	HAL_SPI_Receive (&hspi1, data, data_length, 100);  // read 6 BYTES of data
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;;
+	}
 
-	return 0;
+	if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) == HAL_OK) {
+		if (HAL_SPI_Receive(&hspi1, data, data_length, 100) == HAL_OK) {
+			return SX126X_HAL_STATUS_OK;
+		}
+	}
+
+	return SX126X_HAL_STATUS_ERROR;
 }
 
 sx126x_hal_status_t sx126x_hal_reset( const void* context ) {
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	usleep(150);
+	usleep(100);
 	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-	return 0;
+
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;;
+	}
+
+	return SX126X_HAL_STATUS_OK;
 }
 
 sx126x_hal_status_t sx126x_hal_wakeup( const void* context ) {
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;;
+	}
+
 	// Send dummy data to sx1262 to pull NSS low which will wake it up.
-	uint8_t data = 0;
-	HAL_SPI_Transmit(&hspi1, &data, 1, 100);
-	return 0;
+	uint8_t* data = {0};
+	HAL_SPI_Transmit(&hspi1, data, 1, 100);
+	return SX126X_HAL_STATUS_OK;
 }
 
 /* USER CODE END 4 */
