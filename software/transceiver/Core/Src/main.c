@@ -13,6 +13,9 @@
  * in the root directory of this software component.
  * If no LICENSE file comes with this software, it is provided AS-IS.
  *
+ * NOTE: MOST OF THE ERROR LOGGING IS FOR TESTING ONLY
+ *       Remove most of it when done so it is actually readable.
+ *
  ******************************************************************************
  */
 /* USER CODE END Header */
@@ -29,7 +32,10 @@
 #include "stm32u5xx_hal_uart.h"
 #include "sx126x.h"
 #include "sx126x_hal.h"
+#include "sx126x_status.h"
+#include <stddef.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
 
@@ -79,6 +85,7 @@ typedef struct settings_s {
   uint8_t payload_len;
   uint8_t lora_symb_timeout;
   uint8_t sleep_cfg;
+  uint8_t log_level; // 0 = none, 1 = error, 2 = warning, 3 = info, 4 = debug.
   bool crc_en;
   bool invert_iq;
 } settings_t;
@@ -98,11 +105,14 @@ settings_t default_settings = {
           // explicit.
     8,
     SX126X_SLEEP_CFG_COLD_START,
+    0,
     1,
     0,
 };
 
 settings_t *global_settings;
+
+char *debug_msg;
 
 /* USER CODE END PV */
 
@@ -114,6 +124,7 @@ static void MX_USART1_UART_Init(void);
 static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
 
+int log_msg(char *msg, uint8_t log_level);
 static void lora_tx_rx(uint8_t *data);
 static void lora_set_config(settings_t *settings);
 
@@ -173,7 +184,7 @@ int main(void) {
     // 500ms timeout.
     HAL_UART_Receive(&huart1, buf, BUFFER_SIZE + 1, 500);
 
-    uint8_t command = buf[32];
+    const uint8_t command = buf[32];
 
     // Create new data array without command byte.
     uint8_t data[BUFFER_SIZE];
@@ -181,16 +192,48 @@ int main(void) {
       data[i] = buf[i];
     }
 
-    // If command byte is 0 perform normal radio operation.
-    if (command == 0) {
-      lora_tx_rx(data);
-    } else if (command == 1) { // Enter sleep mode.
-      sx126x_set_sleep(rf_context, global_settings->sleep_cfg);
+    if (command == 1) { // Enter sleep mode.
+      if (global_settings->log_level > 2) {
+        log_msg("SX1262 entering sleep mode.", 3);
+      }
+      if (sx126x_set_sleep(rf_context, global_settings->sleep_cfg) !=
+              SX126X_STATUS_OK &&
+          global_settings->log_level > 0) {
+        log_msg("Error with SX1262.", 1);
+      }
     } else if (command == 2) { // Wakeup from sleep mode.
-      sx126x_wakeup(rf_context);
+      if (global_settings->log_level > 2) {
+        log_msg("Waking up SX1262.", 3);
+      }
+      if (sx126x_wakeup(rf_context) == SX126X_STATUS_OK &&
+          global_settings->log_level > 0) {
+        log_msg("Error waking up SX1262.", 1);
+      }
     } else if (command == 3) { // Set radio settings.
+      if (global_settings->log_level > 2) {
+        log_msg("Setting SX1262 config.", 3);
+      }
       lora_set_config((settings_t *)data);
+    } else { // If command byte is 0 or invalid perform normal radio operation.
+      lora_tx_rx(data);
+
+      // Send data back with datatype byte.
+      const uint8_t datatype = 0;
+
+      // Create new data array with command byte.
+      uint8_t rx_data[BUFFER_SIZE + 1];
+      for (int i = 0; i < BUFFER_SIZE; i++) {
+        rx_data[i] = data[i];
+      }
+      rx_data[BUFFER_SIZE] = datatype;
+
+      // Print RX data.
+      HAL_UART_Transmit(&huart1, rx_data, BUFFER_SIZE + 1, 100);
     }
+  }
+
+  if (global_settings->log_level > 3) {
+    log_msg("End of loop.", 4);
   }
   /* USER CODE END 3 */
 }
@@ -407,24 +450,75 @@ static void MX_GPIO_Init(void) {
 
 /* USER CODE BEGIN 4 */
 
+int log_msg(char *msg, uint8_t log_level) {
+  size_t msg_len = sizeof(&msg);
+  char data[BUFFER_SIZE + 1];
+
+  // Check to see if log_level is valid.
+  if (log_level < 1) {
+    return 1;
+  }
+
+  // Check to see if msg_len is valid.
+  if (msg_len <= BUFFER_SIZE) {
+    for (int i = 0; i < msg_len; i++) {
+      if (i < msg_len) {
+        data[i] = msg[i];
+      } else {
+        data[i] = 0;
+      }
+    }
+    // Add log level to data.
+    data[BUFFER_SIZE] = log_level;
+    if (HAL_UART_Transmit(&huart1, (uint8_t *)data, BUFFER_SIZE, 100) ==
+        HAL_OK) {
+      return 0;
+    }
+  }
+
+  return 1;
+}
+
 static void lora_tx_rx(uint8_t *data) {
+  if (global_settings->log_level > 2) {
+    log_msg("Transmitting data.", 3);
+  }
+
   // Write data to TX buffer.
-  sx126x_write_buffer(rf_context, 0, data, BUFFER_SIZE);
+  if (sx126x_write_buffer(rf_context, 0, data, BUFFER_SIZE) ==
+          SX126X_STATUS_OK &&
+      global_settings->log_level > 0) {
+    log_msg("Error writing to SX1262 buffer.", 1);
+  }
 
   // Transmit data with a 1s timeout.
-  sx126x_set_tx(rf_context, 1000);
+  if (sx126x_set_tx(rf_context, 1000) == SX126X_STATUS_OK &&
+      global_settings->log_level > 0) {
+    log_msg("Error setting SX1262 to tx.", 1);
+  }
 
+  if (global_settings->log_level > 2) {
+    log_msg("Receiving data.", 3);
+  }
   // Receive data with a 1s timeout.
-  sx126x_set_rx(rf_context, 1000);
+  if (sx126x_set_rx(rf_context, 1000) == SX126X_STATUS_OK &&
+      global_settings->log_level > 0) {
+    log_msg("Error setting to SX1262 to rx", 1);
+  }
 
   // Read RX buffer data.
-  sx126x_read_buffer(rf_context, 0, data, BUFFER_SIZE);
-
-  // Print RX data.
-  HAL_UART_Transmit(&huart1, data, BUFFER_SIZE, 100);
+  if (sx126x_read_buffer(rf_context, 0, data, BUFFER_SIZE) ==
+          SX126X_STATUS_OK &&
+      global_settings->log_level > 0) {
+    log_msg("Error reading SX1262 buffer", 1);
+  }
 }
 
 static void lora_set_config(settings_t *settings) {
+  if (global_settings->log_level > 2) {
+    log_msg("Configuring SX1262.", 3);
+  }
+
   global_settings = settings;
 
   sx126x_set_rf_freq(rf_context, settings->frequency);
