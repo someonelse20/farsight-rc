@@ -12,12 +12,11 @@
  * This software is licensed under terms that can be found in the LICENSE file
  * in the root directory of this software component.
  * If no LICENSE file comes with this software, it is provided AS-IS.
- *
- * NOTE: MOST OF THE ERROR LOGGING IS FOR TESTING ONLY
- *       Remove most of it when done so it is actually readable.
- *
  ******************************************************************************
  */
+
+// TODO: Add custom error handleing and checking functions.
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -110,7 +109,6 @@ static void MX_ICACHE_Init(void);
 /* USER CODE BEGIN PFP */
 
 int log_msg(char *msg, uint8_t log_level);
-static void lora_tx_rx(uint8_t *data);
 static void lora_set_config(settings_t *settings);
 
 /* USER CODE END PFP */
@@ -422,41 +420,6 @@ int log_msg(char *msg, uint8_t log_level) {
   return 1;
 }
 
-static void lora_tx_rx(uint8_t *data) {
-  if (global_settings->log_level > 2) {
-    log_msg("Transmitting data.", 3);
-  }
-
-  // Write data to TX buffer.
-  if (sx126x_write_buffer(RF_CONTEXT, 0, data, BUFFER_SIZE) ==
-          SX126X_STATUS_OK &&
-      global_settings->log_level > 0) {
-    log_msg("Error writing to SX1262 buffer.", 1);
-  }
-
-  // Transmit data with a 1s timeout.
-  if (sx126x_set_tx(RF_CONTEXT, 1000) == SX126X_STATUS_OK &&
-      global_settings->log_level > 0) {
-    log_msg("Error setting SX1262 to tx.", 1);
-  }
-
-  if (global_settings->log_level > 2) {
-    log_msg("Receiving data.", 3);
-  }
-  // Receive data with a 1s timeout.
-  if (sx126x_set_rx(RF_CONTEXT, 1000) == SX126X_STATUS_OK &&
-      global_settings->log_level > 0) {
-    log_msg("Error setting to SX1262 to rx", 1);
-  }
-
-  // Read RX buffer data.
-  if (sx126x_read_buffer(RF_CONTEXT, 0, data, BUFFER_SIZE) ==
-          SX126X_STATUS_OK &&
-      global_settings->log_level > 0) {
-    log_msg("Error reading SX1262 buffer", 1);
-  }
-}
-
 static void lora_set_config(settings_t *settings) {
   if (global_settings->log_level > 2) {
     log_msg("Configuring SX1262.", 3);
@@ -517,13 +480,15 @@ sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command,
     ;
   }
 
-  if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) == HAL_OK) {
-    if (HAL_SPI_Receive(&hspi1, data, data_length, 100) == HAL_OK) {
-      return SX126X_HAL_STATUS_OK;
-    }
+  if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) == HAL_ERROR) {
+    return SX126X_HAL_STATUS_ERROR;
   }
 
-  return SX126X_HAL_STATUS_ERROR;
+  if (HAL_SPI_Receive(&hspi1, data, data_length, 100) == HAL_ERROR) {
+    return SX126X_HAL_STATUS_ERROR;
+  }
+
+  return SX126X_HAL_STATUS_OK;
 }
 
 sx126x_hal_status_t sx126x_hal_reset(const void *context) {
