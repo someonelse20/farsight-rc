@@ -480,11 +480,13 @@ sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command,
     ;
   }
 
-  if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) == HAL_ERROR) {
+  // Using HAL_SPI_Transmit and HAL_SPI_Receive instead of
+  // HAL_SPI_TransmitReceive in case command_length != data_length.
+  if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) != HAL_OK) {
     return SX126X_HAL_STATUS_ERROR;
   }
 
-  if (HAL_SPI_Receive(&hspi1, data, data_length, 100) == HAL_ERROR) {
+  if (HAL_SPI_Receive(&hspi1, data, data_length, 100) != HAL_OK) {
     return SX126X_HAL_STATUS_ERROR;
   }
 
