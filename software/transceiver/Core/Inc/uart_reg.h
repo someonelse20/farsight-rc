@@ -29,7 +29,6 @@ typedef struct settings_s {
 } settings_t;
 
 // Register handle functions. 0 = OK, 1 == error.
-
 int reg_tx_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_rx_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_tx_rx_h(UART_HandleTypeDef *huart, settings_t *settings);
