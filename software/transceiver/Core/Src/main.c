@@ -24,7 +24,6 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
-#include "reg.h"
 #include "stm32u585xx.h"
 #include "stm32u5xx_hal.h"
 #include "stm32u5xx_hal_def.h"
@@ -34,6 +33,7 @@
 #include "sx126x.h"
 #include "sx126x_hal.h"
 #include "sx126x_status.h"
+#include "uart_reg.h"
 #include <stddef.h>
 #include <stdint.h>
 #include <stdio.h>

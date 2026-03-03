@@ -1,4 +1,4 @@
-#include "reg.h"
+#include "uart_reg.h"
 #include "stm32u5xx_hal_uart.h"
 #include "sx126x.h"
 #include <stdint.h>
