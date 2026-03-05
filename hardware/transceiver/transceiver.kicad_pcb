@@ -7726,7 +7726,7 @@
 		(at 152.9 103.7 90)
 		(descr "http://www.alps.com/prod/info/E/HTML/Tact/SurfaceMount/SKRK/SKRKAHE020.html")
 		(tags "SMD SMT button")
-		(property "Reference" "RESET1"
+		(property "Reference" "RESET"
 			(at 3.4 -0.7 180)
 			(layer "F.SilkS")
 			(uuid "833d47a5-de4c-4ecd-b4f2-4299cef41aa7")
@@ -11950,7 +11950,7 @@
 		(at 152.9 109.4 -90)
 		(descr "http://www.alps.com/prod/info/E/HTML/Tact/SurfaceMount/SKRK/SKRKAHE020.html")
 		(tags "SMD SMT button")
-		(property "Reference" "BOOT1"
+		(property "Reference" "BOOT"
 			(at 3.5 0.4 180)
 			(layer "F.SilkS")
 			(uuid "8134c77e-f8b7-4051-b829-76825dd0df8c")
@@ -16279,7 +16279,7 @@
 		)
 		(polygon
 			(pts
-				(xy 121.1125 90.7) (xy 170 90.8) (xy 170 142.17375) (xy 121.1125 142.17375)
+				(xy 123.1125 92.7) (xy 156 92.8) (xy 156 126.17375) (xy 123.1125 126.17375)
 			)
 		)
 		(filled_polygon
@@ -18466,7 +18466,7 @@
 		)
 		(polygon
 			(pts
-				(xy 122.1125 89.72375) (xy 171.8625 89.72375) (xy 171.8625 140.17375) (xy 122.1125 140.17375)
+				(xy 124.1125 91.72375) (xy 156.8625 91.72375) (xy 156.8625 125.17375) (xy 124.1125 125.17375)
 			)
 		)
 		(filled_polygon
