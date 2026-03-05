@@ -7342,7 +7342,7 @@
 		)
 		(uuid "016e667a-93ef-4dc4-a22e-7a58ad4c8c57")
 	)
-	(label "IN_RX"
+	(label "TX"
 		(at 187.96 81.28 180)
 		(effects
 			(font
@@ -7402,7 +7402,7 @@
 		)
 		(uuid "32ee68d6-93bd-492e-b02a-44d5044e7eb5")
 	)
-	(label "IN_RX"
+	(label "TX"
 		(at 45.72 38.1 180)
 		(effects
 			(font
@@ -7432,7 +7432,7 @@
 		)
 		(uuid "46ffc7b8-d1df-4b89-a671-f1fa1b4c6f5d")
 	)
-	(label "IN_TX"
+	(label "RX"
 		(at 187.96 83.82 180)
 		(effects
 			(font
@@ -7502,7 +7502,7 @@
 		)
 		(uuid "670b3e66-f7e2-4cc4-8726-080ee492a042")
 	)
-	(label "IN_TX"
+	(label "RX"
 		(at 45.72 35.56 180)
 		(effects
 			(font
