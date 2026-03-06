@@ -9,11 +9,15 @@ __--This is still under development and is subject to change--__
 
 ### Controller
 
+![alt text](assets/controller_pcb.png)
+
 The switch in the middle of the controller is the power switch and the led is the status of the battery charging. The usb connecter will charge the battery and can be used to communicate with the ESP32. The microsd card will log all the incoming telemetry.
 
 The controller software is currently pretty basic and missing some fetures. The wifi network the esp32 will create can be configured by installing the espressive ide and running idf.py menuconfig and changing the wifi ssid and password under Wifi Configuration. Requesting /telemetry of the ip of the nextork will return a set of comma seperated values in the format of "altitude_meters,speed_meters_per_second,heading_degrees,latitude,longitude".
 
 ### Transceiver
+
+![alt text](assets/transceiver_pcb.png)
 
 UART pinout:
 | 1   | 2   | 3  | 4  |
@@ -49,4 +53,4 @@ The transceiver is built on the [Semtech SX1262 driver](https://github.com/Lora-
 | 11      | set_encrypt_params       | Sets encryption parameters         | I            | -    | Not currently implemented                                                                                                                                               |
 | 12      | enable_encrypt           | Enables/disables encryption        | I            | -    | Not currently implemented                                                                                                                                               |
 
-TBD means that the size is based on the size of a struct which will be calculaten when I can run the code on the hardware.
+TBD means that the size is based on the size of a struct which will be calculated when I can run the code on the hardware.
