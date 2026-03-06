@@ -54,3 +54,17 @@ The transceiver is built on the [Semtech SX1262 driver](https://github.com/Lora-
 | 12      | enable_encrypt           | Enables/disables encryption        | I            | -    | Not currently implemented                                                                                                                                               |
 
 TBD means that the size is based on the size of a struct which will be calculated when I can run the code on the hardware.
+
+## BOM
+
+All prices in USD
+| Item             | Quantity | Price | Link                                                                                                   |
+|------------------|----------|-------|--------------------------------------------------------------------------------------------------------|
+| Controller pcb   | 2        |       | https://jlcpcb.com                                                                                     |
+| Transceiver      | 2        |       | https://jlcpcb.com                                                                                     |
+| Joystick         | 2        | 6.08  | https://www.digikey.com/en/products/detail/c-k/THB001P/11687191                                        |
+| RP-SMA connector | 2        | 7.4   | https://www.digikey.com/en/products/detail/taoglas-limited/PCB-RPSMAFRA-HT/5034735                     |
+| Antenna          | 2        | 23.14 | https://www.digikey.com/en/products/detail/te-connectivity-linx/ANT-915-IPW1-RPS/15293389              |
+| Battery          | 1        | 3.25  | https://www.18650batterystore.com/products/samsung-30q                                                 |
+| Battery Holder   | 1        | 2.78  | https://www.digikey.com/en/products/detail/mpd-memory-protection-devices/BK-18650-PC2/2079908          |
+| MicroSD card     | 1        | 19.91 | https://www.amazon.com/Amazon-Basics-microSDXC-Memory-Adapter/dp/B08TJRVWV1?c=ts&s=pc&ts_id=3015433011 |
