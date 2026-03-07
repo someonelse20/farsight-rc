@@ -64,6 +64,7 @@ All prices in USD. Price column is total price.
 | Controller pcb   | 2        |       | https://jlcpcb.com                                                                                     |
 | Transceiver      | 2        |       | https://jlcpcb.com                                                                                     |
 | ESP32-S3         | 2        | 5.28  | https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-MINI-1-N8/15295890               |
+| Thermistor       | 2        | 0.2   | https://www.digikey.com/en/products/detail/tdk-corporation/NTCG103JF103FT1/614628                      |
 | Joystick         | 4        | 12.16 | https://www.digikey.com/en/products/detail/c-k/THB001P/11687191                                        |
 | RP-SMA connector | 4        | 14.8  | https://www.digikey.com/en/products/detail/taoglas-limited/PCB-RPSMAFRA-HT/5034735                     |
 | Antenna          | 2        | 23.14 | https://www.digikey.com/en/products/detail/te-connectivity-linx/ANT-915-IPW1-RPS/15293389              |
