@@ -7870,7 +7870,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "07dbc802-c327-42dc-9d6c-c3540ccb8819")
-		(property "Reference" "C7"
+		(property "Reference" "C6"
 			(at 85.852 33.02 0)
 			(effects
 				(font
@@ -7924,7 +7924,7 @@
 		(instances
 			(project "transceiver"
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "C7")
+					(reference "C6")
 					(unit 1)
 				)
 			)
@@ -7949,7 +7949,7 @@
 				)
 			)
 		)
-		(property "Value" "Boot"
+		(property "Value" "SW_Push"
 			(at 252.73 101.6 0)
 			(effects
 				(font
@@ -8155,7 +8155,7 @@
 		(dnp no)
 		(fields_autoplaced yes)
 		(uuid "0b10ff6f-3d14-46ba-9f72-e27267dd8d32")
-		(property "Reference" "#PWR023"
+		(property "Reference" "#PWR022"
 			(at 140.97 187.96 0)
 			(effects
 				(font
@@ -8205,7 +8205,7 @@
 		(instances
 			(project ""
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "#PWR023")
+					(reference "#PWR022")
 					(unit 1)
 				)
 			)
@@ -8229,7 +8229,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "2K"
 			(at 123.825 112.649 0)
 			(effects
 				(font
@@ -8561,7 +8561,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "175f3e9c-53b7-4e7f-929a-2f0672e6eaa7")
-		(property "Reference" "#PWR010"
+		(property "Reference" "#PWR011"
 			(at 76.2 93.98 0)
 			(effects
 				(font
@@ -8611,7 +8611,7 @@
 		(instances
 			(project "transceiver"
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "#PWR010")
+					(reference "#PWR011")
 					(unit 1)
 				)
 			)
@@ -10478,7 +10478,7 @@
 				)
 			)
 		)
-		(property "Value" "Reset"
+		(property "Value" "SW_Push"
 			(at 229.87 101.6 0)
 			(effects
 				(font
@@ -10740,7 +10740,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "5ff78987-3474-408a-90e0-6ee6be4aa598")
-		(property "Reference" "C6"
+		(property "Reference" "C7"
 			(at 87.376 91.44 90)
 			(effects
 				(font
@@ -10794,7 +10794,7 @@
 		(instances
 			(project "transceiver"
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "C6")
+					(reference "C7")
 					(unit 1)
 				)
 			)
@@ -11083,7 +11083,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "7424954e-2cec-49da-ba4b-d7ee280090b4")
-		(property "Reference" "#PWR022"
+		(property "Reference" "#PWR023"
 			(at 143.51 140.97 0)
 			(effects
 				(font
@@ -11133,7 +11133,7 @@
 		(instances
 			(project "transceiver"
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "#PWR022")
+					(reference "#PWR023")
 					(unit 1)
 				)
 			)
@@ -12384,7 +12384,7 @@
 				)
 			)
 		)
-		(property "Footprint" "Inductor_SMD:L_0402_1005Metric"
+		(property "Footprint" "Inductor_SMD:L_0603_1608Metric"
 			(at 76.2 102.87 0)
 			(effects
 				(font
@@ -13039,7 +13039,7 @@
 		(on_board yes)
 		(dnp no)
 		(uuid "dd5b2c8b-33e4-4285-be6c-a25417e6f1ff")
-		(property "Reference" "#PWR011"
+		(property "Reference" "#PWR010"
 			(at 73.66 48.26 0)
 			(effects
 				(font
@@ -13089,7 +13089,7 @@
 		(instances
 			(project "transceiver"
 				(path "/90219c92-b6dc-438d-9fd1-0abd4c4047d3"
-					(reference "#PWR011")
+					(reference "#PWR010")
 					(unit 1)
 				)
 			)
@@ -13755,7 +13755,7 @@
 				)
 			)
 		)
-		(property "Value" "1k"
+		(property "Value" "2K"
 			(at 133.985 112.649 0)
 			(effects
 				(font
