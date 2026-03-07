@@ -62,7 +62,7 @@ All prices in USD. Price column is total price and does not include shipping.
 | Item             | Quantity | Price | Link                                                                                                   |
 |------------------|----------|-------|--------------------------------------------------------------------------------------------------------|
 | Controller pcb   | 2        | 49.99 | https://jlcpcb.com                                                                                     |
-| Transceiver      | 2        | 87.60 | https://jlcpcb.com                                                                                     |
+| Transceiver      | 2        | 87.36 | https://jlcpcb.com                                                                                     |
 | RF filter         | 2        | 0.92  | https://www.digikey.com/en/products/detail/johanson-technology-inc/0900FM15K0039001E/16639329          |
 | ESP32-S3         | 2        | 5.28  | https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-MINI-1-N8/15295890               |
 | Thermistor       | 2        | 0.20  | https://www.digikey.com/en/products/detail/tdk-corporation/NTCG103JF103FT1/614628                      |
