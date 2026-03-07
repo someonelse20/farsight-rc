@@ -65,6 +65,7 @@ All prices in USD
 | Joystick         | 2        | 6.08  | https://www.digikey.com/en/products/detail/c-k/THB001P/11687191                                        |
 | RP-SMA connector | 2        | 7.4   | https://www.digikey.com/en/products/detail/taoglas-limited/PCB-RPSMAFRA-HT/5034735                     |
 | Antenna          | 2        | 23.14 | https://www.digikey.com/en/products/detail/te-connectivity-linx/ANT-915-IPW1-RPS/15293389              |
+| Power switch     | 1        | 0.73  | https://www.digikey.com/en/products/detail/c-k/OS102011MS2QN1/411602                                   |
 | Battery          | 1        | 3.25  | https://www.18650batterystore.com/products/samsung-30q                                                 |
 | Battery Holder   | 1        | 2.78  | https://www.digikey.com/en/products/detail/mpd-memory-protection-devices/BK-18650-PC2/2079908          |
 | MicroSD card     | 1        | 19.91 | https://www.amazon.com/Amazon-Basics-microSDXC-Memory-Adapter/dp/B08TJRVWV1?c=ts&s=pc&ts_id=3015433011 |
