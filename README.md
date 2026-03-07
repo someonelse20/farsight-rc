@@ -68,3 +68,4 @@ All prices in USD
 | Battery          | 1        | 3.25  | https://www.18650batterystore.com/products/samsung-30q                                                 |
 | Battery Holder   | 1        | 2.78  | https://www.digikey.com/en/products/detail/mpd-memory-protection-devices/BK-18650-PC2/2079908          |
 | MicroSD card     | 1        | 19.91 | https://www.amazon.com/Amazon-Basics-microSDXC-Memory-Adapter/dp/B08TJRVWV1?c=ts&s=pc&ts_id=3015433011 |
+| ST-Link V2       | 1        | 9.49  | https://www.amazon.com/HiLetgo-Emulator-Downloader-Programmer-STM32F103C8T6/dp/B07SQV6VLZ              |
