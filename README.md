@@ -58,10 +58,10 @@ TBD means that the size is based on the size of a struct which will be calculate
 ## BOM
 
 BOM to make two transceivers and two controllers but with only two antennas and one micro SD card.
-All prices in USD. Price column is total price.
+All prices in USD. Price column is total price and does not include shipping.
 | Item             | Quantity | Price | Link                                                                                                   |
 |------------------|----------|-------|--------------------------------------------------------------------------------------------------------|
-| Controller pcb   | 2        |       | https://jlcpcb.com                                                                                     |
+| Controller pcb   | 2        | 49.99 | https://jlcpcb.com                                                                                     |
 | Transceiver      | 2        |       | https://jlcpcb.com                                                                                     |
 | ESP32-S3         | 2        | 5.28  | https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-MINI-1-N8/15295890               |
 | Thermistor       | 2        | 0.2   | https://www.digikey.com/en/products/detail/tdk-corporation/NTCG103JF103FT1/614628                      |
