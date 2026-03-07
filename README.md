@@ -62,15 +62,15 @@ All prices in USD. Price column is total price and does not include shipping.
 | Item             | Quantity | Price | Link                                                                                                   |
 |------------------|----------|-------|--------------------------------------------------------------------------------------------------------|
 | Controller pcb   | 2        | 49.99 | https://jlcpcb.com                                                                                     |
-| Transceiver      | 2        | 90.96 | https://jlcpcb.com                                                                                     |
+| Transceiver      | 2        | 87.60 | https://jlcpcb.com                                                                                     |
 | RF filter         | 2        | 0.92  | https://www.digikey.com/en/products/detail/johanson-technology-inc/0900FM15K0039001E/16639329          |
 | ESP32-S3         | 2        | 5.28  | https://www.digikey.com/en/products/detail/espressif-systems/ESP32-S3-MINI-1-N8/15295890               |
-| Thermistor       | 2        | 0.2   | https://www.digikey.com/en/products/detail/tdk-corporation/NTCG103JF103FT1/614628                      |
-| Joystick         | 4        | 12.16 | https://www.digikey.com/en/products/detail/c-k/THB001P/11687191                                        |
-| RP-SMA connector | 4        | 14.8  | https://www.digikey.com/en/products/detail/taoglas-limited/PCB-RPSMAFRA-HT/5034735                     |
+| Thermistor       | 2        | 0.20  | https://www.digikey.com/en/products/detail/tdk-corporation/NTCG103JF103FT1/614628                      |
+| Joystick         | 2        | 6.08  | https://www.digikey.com/en/products/detail/c-k/THB001P/11687191                                        |
+| RP-SMA connector | 2        | 7.40  | https://www.digikey.com/en/products/detail/taoglas-limited/PCB-RPSMAFRA-HT/5034735                     |
 | Antenna          | 2        | 23.14 | https://www.digikey.com/en/products/detail/te-connectivity-linx/ANT-915-IPW1-RPS/15293389              |
 | Power switch     | 2        | 1.46  | https://www.digikey.com/en/products/detail/c-k/OS102011MS2QN1/411602                                   |
 | Battery          | 2        | 6.5   | https://www.18650batterystore.com/products/samsung-30q                                                 |
 | Battery Holder   | 2        | 5.56  | https://www.digikey.com/en/products/detail/mpd-memory-protection-devices/BK-18650-PC2/2079908          |
-| MicroSD card     | 1        | 19.91 | https://www.amazon.com/Amazon-Basics-microSDXC-Memory-Adapter/dp/B08TJRVWV1?c=ts&s=pc&ts_id=3015433011 |
+| MicroSD card     | 1        | 9.99  | https://www.amazon.com/Adapter-Memory-Tablet-Console-TF162/dp/B0CYT2KL98                               |
 | ST-Link V2       | 1        | 9.49  | https://www.amazon.com/HiLetgo-Emulator-Downloader-Programmer-STM32F103C8T6/dp/B07SQV6VLZ              |
