@@ -74,3 +74,4 @@ All prices in USD. Price column is total price and does not include shipping.
 | Battery Holder   | 2        | 5.56  | https://www.digikey.com/en/products/detail/mpd-memory-protection-devices/BK-18650-PC2/2079908          |
 | MicroSD card     | 1        | 9.99  | https://www.amazon.com/Adapter-Memory-Tablet-Console-TF162/dp/B0CYT2KL98                               |
 | ST-Link V2       | 1        | 9.49  | https://www.amazon.com/HiLetgo-Emulator-Downloader-Programmer-STM32F103C8T6/dp/B07SQV6VLZ              |
+| OLED display     | 1        | 6.99  | https://www.amazon.com/UCTRONICS-SSD1306-Self-Luminous-Display-Raspberry/dp/B072Q2X2LL                 |
