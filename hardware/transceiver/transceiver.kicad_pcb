@@ -12428,6 +12428,19 @@
 		(layer "Edge.Cuts")
 		(uuid "21ff755b-ae61-4dd7-be34-7d5ed5bbcd80")
 	)
+	(gr_text "Transceiver V1.0"
+		(at 154.5 100.5 90)
+		(layer "B.SilkS")
+		(uuid "58b7f6c5-0178-48fb-b61f-ea45a2023800")
+		(effects
+			(font
+				(size 1 1)
+				(thickness 0.2)
+				(bold yes)
+			)
+			(justify left bottom mirror)
+		)
+	)
 	(segment
 		(start 141.889949 106.997551)
 		(end 142.7 106.1875)
