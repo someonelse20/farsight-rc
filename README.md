@@ -40,19 +40,20 @@ The transceiver has an internal regulator and can handle up to 5v input. The UAR
 The transceiver is built on the [Semtech SX1262 driver](https://github.com/Lora-net/sx126x_driver). To communicate with the transceiver a host must first send a register bit and then the data to transmit or receive based on the table below.
 | Address | Name | Description | Input/Output | Size | Note |
 |---------|--------------------------|------------------------------------|--------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 0 | TX | Transmits packet | I | 32 | Packet size must always be 32 bytes. |
-| 1 | RX | Receives packet | O | 32 | Packet size must always be 32 bytes. |
-| 2 | TX_RX | Transmits then receives packet | I/O | 32 | Packet size must always be 32 bytes. |
-| 3 | sleep | Puts transceiver into sleep mode | - | 0 | |
-| 4 | wakeup | Wakes up transceiver | - | 0 | |
-| 5 | set_all | Inputs a setting struct | I | TBD | See [settings_t](https://github.com/someonelse20/remote-controller/blob/main/software/transceiver/Core/Inc/uart_reg.h#L29) |
-| 6 | set_frequency | Sets SX1262 frequency | I | 4 | See [sx126x_set_rf_freq](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L1084) |
-| 7 | set_tx_params | Sets SX1262 TX power and ramp time | I | 2 | array of {power in dBm, ramp time ([see datasheet](https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/RQ000008nKCH/hp2iKwMDKWl34g1D3LBf_zC7TGBRIo2ff5LMnS8r19s]))} |
-| 8 | set_lora_mod_params | Sets LoRa parameters | I | TBD | See [sx126x_mod_params_lora_t](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L381) |
-| 9 | set_lora_pkt_params | Sets LoRa packet parameters | I | TBD | See [sx126x_pkt_params_lora_t](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L454) |
-| 10 | set_lora_symb_nb_timeout | Sets loRa timeout in symbols | I | 1 | See [sx126x_set_lora_symb_nb_timeout](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L1236) |
-| 11 | set_encrypt_params | Sets encryption parameters | I | - | Not currently implemented |
-| 12 | enable_encrypt | Enables/disables encryption | I | - | Not currently implemented |
+| 0 | who_am_i | Device ID | O | 1 | Device ID is 176 |
+| 1 | TX | Transmits packet | I | 32 | Packet size must always be 32 bytes. |
+| 2 | RX | Receives packet | O | 32 | Packet size must always be 32 bytes. |
+| 3 | TX_RX | Transmits then receives packet | I/O | 32 | Packet size must always be 32 bytes. |
+| 4 | sleep | Puts transceiver into sleep mode | - | 0 | |
+| 5 | wakeup | Wakes up transceiver | - | 0 | |
+| 6 | set_all | Inputs a setting struct | I | TBD | See [settings_t](https://github.com/someonelse20/remote-controller/blob/main/software/transceiver/Core/Inc/uart_reg.h#L29) |
+| 7 | set_frequency | Sets SX1262 frequency | I | 4 | See [sx126x_set_rf_freq](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L1084) |
+| 8 | set_tx_params | Sets SX1262 TX power and ramp time | I | 2 | array of {power in dBm, ramp time ([see datasheet](https://semtech.my.salesforce.com/sfc/p/#E0000000JelG/a/RQ000008nKCH/hp2iKwMDKWl34g1D3LBf_zC7TGBRIo2ff5LMnS8r19s]))} |
+| 9 | set_lora_mod_params | Sets LoRa parameters | I | TBD | See [sx126x_mod_params_lora_t](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L381) |
+| 10 | set_lora_pkt_params | Sets LoRa packet parameters | I | TBD | See [sx126x_pkt_params_lora_t](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L454) |
+| 11 | set_lora_symb_nb_timeout | Sets loRa timeout in symbols | I | 1 | See [sx126x_set_lora_symb_nb_timeout](https://github.com/Lora-net/sx126x_driver/blob/master/src/sx126x.h#L1236) |
+| 12 | set_encrypt_params | Sets encryption parameters | I | - | Not currently implemented |
+| 13 | enable_encrypt | Enables/disables encryption | I | - | Not currently implemented |
 
 TBD means that the size is based on the size of a struct which will be calculated when I can run the code on the hardware.
 
