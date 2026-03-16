@@ -12,7 +12,7 @@ Custom long range remote controller with ESP32 to stream telemetry and an STM32 
 
 ![alt text](assets/controller_pcb.png)
 
-The switch in the middle of the controller is the power switch and the led is the status of the battery charging. The usb connecter will charge the battery and can be used to communicate with the ESP32. The microsd card will log all the incoming telemetry.
+The switch in the middle of the controller is the power switch and the led is the status of the battery charging. The usb connecter will charge the battery and can be used to communicate with the ESP32. The micro SD card will log all the incoming telemetry.
 
 The controller software is currently pretty basic and missing some fetures. The wifi network the esp32 will create can be configured by installing the espressive ide and running idf.py menuconfig and changing the wifi ssid and password under Wifi Configuration. Requesting /telemetry of the ip of the nextork will return a set of comma separated values in the format of "altitude_meters,speed_meters_per_second,heading_degrees,latitude,longitude".
 
