@@ -65,33 +65,31 @@ UART_HandleTypeDef huart1;
 
 /* USER CODE BEGIN PV */
 
-const void *RF_CONTEXT = 0;
+const void *RF_CONTEXT;
 
 uint8_t *buf;
 
 uint8_t reg = -1;
 
 settings_t default_settings = {
-    0,
-    915000,
-    8,
-    22,
-    SX126X_RAMP_20_US,
-    SX126X_LORA_SF7,
-    SX126X_LORA_BW_125,
-    SX126X_LORA_CR_4_8,
-    0, // NOTE: Check to see if disabling low data rate optimization is needed
-       // for thermal performance.
-    SX126X_LORA_PKT_EXPLICIT,
-    0x20, // NOTE: I'm not sure if this is needed because packet type is
-          // explicit. BTW it's 32 bytes.
-    8,
-    SX126X_SLEEP_CFG_COLD_START,
-    0,
-    1,
-    0,
-    1,
-    0,
+	0,
+	915000,
+	8,
+	22,
+	SX126X_RAMP_20_US,
+	SX126X_LORA_SF7,
+	SX126X_LORA_BW_125,
+	SX126X_LORA_CR_4_8,
+	0, // NOTE: Check to see if disabling low data rate optimization is needed for thermal performance.
+	SX126X_LORA_PKT_EXPLICIT,
+	0xFF, // NOTE: I'm not sure if this is needed because packet type is explicit.
+	8,
+	SX126X_SLEEP_CFG_COLD_START,
+	0,
+	1,
+	0,
+	1,
+	0,
 };
 
 settings_t *global_settings;
@@ -152,19 +150,19 @@ int main(void)
   MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
 
-  lora_set_config(&default_settings);
+	lora_set_config(&default_settings);
 
-  HAL_UART_Receive_IT(&huart1, &reg, 1);
+	HAL_UART_Receive_IT(&huart1, &reg, 1);
 
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1) {
+	while (1) {
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+	}
   /* USER CODE END 3 */
 }
 
@@ -374,9 +372,15 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : PB1 PB2 */
-  GPIO_InitStruct.Pin = GPIO_PIN_1|GPIO_PIN_2;
+  /*Configure GPIO pin : PB1 */
+  GPIO_InitStruct.Pin = GPIO_PIN_1;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : PB2 */
+  GPIO_InitStruct.Pin = GPIO_PIN_2;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
@@ -387,6 +391,10 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+  /* EXTI interrupt init*/
+  HAL_NVIC_SetPriority(EXTI2_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI2_IRQn);
+
   /* USER CODE BEGIN MX_GPIO_Init_2 */
 
   /* USER CODE END MX_GPIO_Init_2 */
@@ -395,68 +403,84 @@ static void MX_GPIO_Init(void)
 /* USER CODE BEGIN 4 */
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart) {
-  if (huart->Instance == USART1) {
-    if (reg > 0) {
-      // Call handle function for each register.
-      reg_handle[reg](huart, global_settings);
-    }
-    // Receive the next register.
-    HAL_UART_Receive_IT(huart, &reg, 1);
-  }
+	if (huart->Instance == USART1) {
+		if (reg > 0) {
+			// Call handle function for each register.
+			reg_handle[reg](huart, global_settings);
+		}
+		// Receive the next register.
+		HAL_UART_Receive_IT(huart, &reg, 1);
+	}
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin) {
+	if (!global_settings->auto_rx) {
+		return;
+	}
+
+	sx126x_read_buffer(RF_CONTEXT, 0, buf, global_settings->payload_len);
+
+	HAL_UART_Transmit(&huart1, buf, global_settings->payload_len, 500);
+
 }
 
 int log_msg(char *msg, uint8_t log_level) {
-  size_t msg_len = sizeof(&msg);
-  char data[BUFFER_SIZE + 1];
+	size_t msg_len = sizeof(&msg);
+	char data[BUFFER_SIZE + 1];
 
-  // Check to see if log_level is valid.
-  if (log_level < 1) {
-    return 1;
-  }
+	// Check to see if log_level is valid.
+	if (log_level < 1) {
+		return 1;
+	}
 
-  // Check to see if msg_len is valid.
-  if (msg_len <= BUFFER_SIZE) {
-    for (int i = 0; i < msg_len; i++) {
-      if (i < msg_len) {
-        data[i] = msg[i];
-      } else {
-        data[i] = 0;
-      }
-    }
-    // Add log level to data.
-    data[BUFFER_SIZE] = log_level;
-    if (HAL_UART_Transmit(&huart1, (uint8_t *)data, BUFFER_SIZE, 100) ==
-        HAL_OK) {
-      return 0;
-    }
-  }
+	// Check to see if msg_len is valid.
+	if (msg_len <= BUFFER_SIZE) {
+		for (int i = 0; i < msg_len; i++) {
+			if (i < msg_len) {
+				data[i] = msg[i];
+			} else {
+				data[i] = 0;
+			}
+		}
+		// Add log level to data.
+		data[BUFFER_SIZE] = log_level;
+		if (HAL_UART_Transmit(&huart1, (uint8_t *)data, BUFFER_SIZE, 100) ==
+		    HAL_OK) {
+			return 0;
+		}
+	}
 
-  return 1;
+	return 1;
 }
 
 static void lora_set_config(settings_t *settings) {
-  if (global_settings->log_level > 2) {
-    log_msg("Configuring SX1262.", 3);
-  }
+	if (global_settings->log_level > 2) {
+		log_msg("Configuring SX1262.", 3);
+	}
 
-  sx126x_set_pkt_type(RF_CONTEXT, SX126X_PKT_TYPE_LORA);
+	// Set DIO1 to packet received interrupt
+	sx126x_set_dio_irq_params(RF_CONTEXT, 1, 1, 0, 0);
 
-  global_settings = settings;
+	sx126x_set_pkt_type(RF_CONTEXT, SX126X_PKT_TYPE_LORA);
 
-  sx126x_set_rf_freq(RF_CONTEXT, settings->frequency);
-  sx126x_set_tx_params(RF_CONTEXT, settings->power, settings->ramp_time);
+	global_settings = settings;
 
-  sx126x_mod_params_lora_t lora_mod_params = {
-      settings->spreading_factor, settings->bandwidth, settings->coding_rate,
-      settings->low_datarate_optimization};
-  sx126x_set_lora_mod_params(RF_CONTEXT, &lora_mod_params);
+	sx126x_set_rf_freq(RF_CONTEXT, settings->frequency);
+	sx126x_set_tx_params(RF_CONTEXT, settings->power, settings->ramp_time);
 
-  sx126x_pkt_params_lora_t lora_pkt_params = {
-      settings->preamble_len, settings->header_type, settings->payload_len,
-      settings->crc_en, settings->invert_iq};
-  sx126x_set_lora_pkt_params(RF_CONTEXT, &lora_pkt_params);
+	sx126x_mod_params_lora_t lora_mod_params = {
+		settings->spreading_factor, settings->bandwidth, settings->coding_rate,
+		settings->low_datarate_optimization
+	};
+	sx126x_set_lora_mod_params(RF_CONTEXT, &lora_mod_params);
 
-  sx126x_set_lora_symb_nb_timeout(RF_CONTEXT, settings->lora_symb_timeout);
+	sx126x_pkt_params_lora_t lora_pkt_params = {
+		settings->preamble_len, settings->header_type, settings->payload_len,
+		settings->crc_en, settings->invert_iq
+	};
+	sx126x_set_lora_pkt_params(RF_CONTEXT, &lora_pkt_params);
+
+	sx126x_set_lora_symb_nb_timeout(RF_CONTEXT, settings->lora_symb_timeout);
 }
 
 /* SX126X hal funcion definitions --------------------------------------------*/
@@ -465,71 +489,71 @@ sx126x_hal_status_t sx126x_hal_write(const void *context,
                                      const uint16_t command_length,
                                      const uint8_t *data,
                                      const uint16_t data_length) {
-  // Wait until the busy pin is low and ready for commands.
-  while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
-    ;
-  }
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;
+	}
 
-  uint8_t buf[command_length + data_length];
-  for (int i = 0; i < command_length; i++) {
-    buf[i] = command[i];
-  }
-  for (int i = 0; i < data_length; i++) {
-    buf[i] = data[i];
-  }
+	uint8_t buf[command_length + data_length];
+	for (int i = 0; i < command_length; i++) {
+		buf[i] = command[i];
+	}
+	for (int i = 0; i < data_length; i++) {
+		buf[i] = data[i];
+	}
 
-  if (HAL_SPI_Transmit(&hspi1, buf, command_length + data_length, 100) ==
-      HAL_OK) {
-    return SX126X_HAL_STATUS_OK;
-  } else {
-    return SX126X_HAL_STATUS_ERROR;
-  }
+	if (HAL_SPI_Transmit(&hspi1, buf, command_length + data_length, 100) ==
+	    HAL_OK) {
+		return SX126X_HAL_STATUS_OK;
+	} else {
+		return SX126X_HAL_STATUS_ERROR;
+	}
 }
 
 sx126x_hal_status_t sx126x_hal_read(const void *context, const uint8_t *command,
                                     const uint16_t command_length,
                                     uint8_t *data, const uint16_t data_length) {
-  // Wait until the busy pin is low and ready for commands.
-  while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
-    ;
-  }
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;
+	}
 
-  // Using HAL_SPI_Transmit and HAL_SPI_Receive instead of
-  // HAL_SPI_TransmitReceive in case command_length != data_length.
-  if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) != HAL_OK) {
-    return SX126X_HAL_STATUS_ERROR;
-  }
+	// Using HAL_SPI_Transmit and HAL_SPI_Receive instead of
+	// HAL_SPI_TransmitReceive in case command_length != data_length.
+	if (HAL_SPI_Transmit(&hspi1, command, command_length, 100) != HAL_OK) {
+		return SX126X_HAL_STATUS_ERROR;
+	}
 
-  if (HAL_SPI_Receive(&hspi1, data, data_length, 100) != HAL_OK) {
-    return SX126X_HAL_STATUS_ERROR;
-  }
+	if (HAL_SPI_Receive(&hspi1, data, data_length, 100) != HAL_OK) {
+		return SX126X_HAL_STATUS_ERROR;
+	}
 
-  return SX126X_HAL_STATUS_OK;
+	return SX126X_HAL_STATUS_OK;
 }
 
 sx126x_hal_status_t sx126x_hal_reset(const void *context) {
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-  HAL_Delay(1);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	HAL_Delay(1);
+	HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
 
-  // Wait until the busy pin is low and ready for commands.
-  while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
-    ;
-  }
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;
+	}
 
-  return SX126X_HAL_STATUS_OK;
+	return SX126X_HAL_STATUS_OK;
 }
 
 sx126x_hal_status_t sx126x_hal_wakeup(const void *context) {
-  // Wait until the busy pin is low and ready for commands.
-  while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
-    ;
-  }
+	// Wait until the busy pin is low and ready for commands.
+	while (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_1)) {
+		;
+	}
 
-  // Send dummy data to sx1262 to pull NSS low which will wake it up.
-  uint8_t *data = {0};
-  HAL_SPI_Transmit(&hspi1, data, 1, 100);
-  return SX126X_HAL_STATUS_OK;
+	// Send dummy data to sx1262 to pull NSS low which will wake it up.
+	uint8_t *data = {0};
+	HAL_SPI_Transmit(&hspi1, data, 1, 100);
+	return SX126X_HAL_STATUS_OK;
 }
 
 /* USER CODE END 4 */
@@ -541,10 +565,10 @@ sx126x_hal_status_t sx126x_hal_wakeup(const void *context) {
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
-  __disable_irq();
-  while (1) {
-  }
+	/* User can add his own implementation to report the HAL error return state */
+	__disable_irq();
+	while (1) {
+	}
   /* USER CODE END Error_Handler_Debug */
 }
 #ifdef USE_FULL_ASSERT
@@ -558,9 +582,9 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line
-     number, ex: printf("Wrong parameters value: file %s on line %d\r\n", file,
-     line) */
+	/* User can add his own implementation to report the file name and line
+	   number, ex: printf("Wrong parameters value: file %s on line %d\r\n", file,
+	   line) */
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

@@ -1,11 +1,10 @@
+#include "main.h"
+#include "sx126x.h"
 #include "uart_reg.h"
 #include "stm32u5xx_hal_uart.h"
-#include "sx126x.h"
 #include <stdint.h>
 
 // TODO: Add error handling.
-
-const void *REG_RF_CONTEXT = 0;
 
 uint8_t *reg_buf;
 
@@ -22,9 +21,11 @@ int reg_tx_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	HAL_UART_Receive(huart, reg_buf, size, UART_TIMEOUT);
 
-	sx126x_write_buffer(REG_RF_CONTEXT, 0, reg_buf, size);
+	sx126x_write_buffer(RF_CONTEXT, 0, reg_buf, size);
 
-	sx126x_set_tx(REG_RF_CONTEXT, 1000);
+	sx126x_set_tx(RF_CONTEXT, 1000);
+
+	sx126x_set_rx(RF_CONTEXT, SX126X_RX_CONTINUOUS);
 
 	return 0;
 }
@@ -34,9 +35,9 @@ int reg_rx_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	HAL_UART_Receive(huart, &size, 1, UART_TIMEOUT);
 
-	sx126x_set_rx(REG_RF_CONTEXT, 1000);
+	sx126x_set_rx(RF_CONTEXT, SX126X_RX_CONTINUOUS);
 
-	sx126x_read_buffer(REG_RF_CONTEXT, 0, reg_buf, size);
+	sx126x_read_buffer(RF_CONTEXT, 0, reg_buf, size);
 
 	HAL_UART_Transmit(huart, reg_buf, size, 500);
 
@@ -48,9 +49,11 @@ int reg_tx_set_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	HAL_UART_Receive(huart, reg_buf, SIZE, UART_TIMEOUT);
 
-	sx126x_write_buffer(REG_RF_CONTEXT, 0, reg_buf, SIZE);
+	sx126x_write_buffer(RF_CONTEXT, 0, reg_buf, SIZE);
 
-	sx126x_set_tx(REG_RF_CONTEXT, 1000);
+	sx126x_set_tx(RF_CONTEXT, 1000);
+
+	sx126x_set_rx(RF_CONTEXT, SX126X_RX_CONTINUOUS);
 
 	return 0;
 }
@@ -58,9 +61,9 @@ int reg_tx_set_h(UART_HandleTypeDef *huart, settings_t *settings) {
 int reg_rx_set_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	const uint16_t SIZE = settings->payload_len;
 
-	sx126x_set_rx(REG_RF_CONTEXT, 1000);
+	sx126x_set_rx(RF_CONTEXT, SX126X_RX_CONTINUOUS);
 
-	sx126x_read_buffer(REG_RF_CONTEXT, 0, reg_buf, SIZE);
+	sx126x_read_buffer(RF_CONTEXT, 0, reg_buf, SIZE);
 
 	HAL_UART_Transmit(huart, reg_buf, SIZE, 500);
 
@@ -72,13 +75,13 @@ int reg_tx_rx_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	HAL_UART_Receive(huart, reg_buf, SIZE, UART_TIMEOUT);
 
-	sx126x_write_buffer(REG_RF_CONTEXT, 0, reg_buf, SIZE);
+	sx126x_write_buffer(RF_CONTEXT, 0, reg_buf, SIZE);
 
-	sx126x_set_tx(REG_RF_CONTEXT, 1000);
+	sx126x_set_tx(RF_CONTEXT, 1000);
 
-	sx126x_set_rx(REG_RF_CONTEXT, 1000);
+	sx126x_set_rx(RF_CONTEXT, SX126X_RX_CONTINUOUS);
 
-	sx126x_read_buffer(REG_RF_CONTEXT, 0, reg_buf, SIZE);
+	sx126x_read_buffer(RF_CONTEXT, 0, reg_buf, SIZE);
 
 	HAL_UART_Transmit(huart, reg_buf, SIZE, 500);
 
@@ -87,12 +90,13 @@ int reg_tx_rx_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 int reg_sleep_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	// TODO: Put STM32 in some sort of sleep mode too.
-	sx126x_set_sleep(REG_RF_CONTEXT, settings->sleep_cfg);
+	sx126x_set_sleep(RF_CONTEXT, settings->sleep_cfg);
+
 	return 0;
 }
 
 int reg_wakeup_h(UART_HandleTypeDef *huart, settings_t *settings) {
-	sx126x_wakeup(REG_RF_CONTEXT);
+	sx126x_wakeup(RF_CONTEXT);
 
 	return 0;
 }
@@ -105,22 +109,22 @@ int reg_set_all_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	settings = (settings_t *)reg_buf;
 
-	sx126x_set_rf_freq(REG_RF_CONTEXT, settings->frequency);
-	sx126x_set_tx_params(REG_RF_CONTEXT, settings->power, settings->ramp_time);
+	sx126x_set_rf_freq(RF_CONTEXT, settings->frequency);
+	sx126x_set_tx_params(RF_CONTEXT, settings->power, settings->ramp_time);
 
 	sx126x_mod_params_lora_t lora_mod_params = {
 		settings->spreading_factor, settings->bandwidth, settings->coding_rate,
 		settings->low_datarate_optimization
 	};
-	sx126x_set_lora_mod_params(REG_RF_CONTEXT, &lora_mod_params);
+	sx126x_set_lora_mod_params(RF_CONTEXT, &lora_mod_params);
 
 	sx126x_pkt_params_lora_t lora_pkt_params = {
 		settings->preamble_len, settings->header_type, settings->payload_len,
 		settings->crc_en, settings->invert_iq
 	};
-	sx126x_set_lora_pkt_params(REG_RF_CONTEXT, &lora_pkt_params);
+	sx126x_set_lora_pkt_params(RF_CONTEXT, &lora_pkt_params);
 
-	sx126x_set_lora_symb_nb_timeout(REG_RF_CONTEXT, settings->lora_symb_timeout);
+	sx126x_set_lora_symb_nb_timeout(RF_CONTEXT, settings->lora_symb_timeout);
 
 	return 0;
 }
@@ -132,7 +136,7 @@ int reg_set_frequency_h(UART_HandleTypeDef *huart, settings_t *settings) {
 
 	const uint32_t frequency = (uint32_t)reg_buf;
 
-	sx126x_set_rf_freq(REG_RF_CONTEXT, frequency);
+	sx126x_set_rf_freq(RF_CONTEXT, frequency);
 
 	settings->frequency = frequency;
 
@@ -147,7 +151,7 @@ int reg_set_tx_params_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	const uint8_t power = reg_buf[0];
 	const sx126x_ramp_time_t ramp_time = reg_buf[1];
 
-	sx126x_set_tx_params(REG_RF_CONTEXT, power, ramp_time);
+	sx126x_set_tx_params(RF_CONTEXT, power, ramp_time);
 
 	settings->power = power;
 	settings->ramp_time = ramp_time;
@@ -164,7 +168,7 @@ int reg_set_lora_mod_params_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	const sx126x_mod_params_lora_t *lora_mod_params =
 		(sx126x_mod_params_lora_t *)reg_buf;
 
-	sx126x_set_lora_mod_params(REG_RF_CONTEXT, lora_mod_params);
+	sx126x_set_lora_mod_params(RF_CONTEXT, lora_mod_params);
 
 	settings->spreading_factor = lora_mod_params->sf;
 	settings->bandwidth = lora_mod_params->bw;
@@ -183,7 +187,7 @@ int reg_set_lora_pkt_params_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	const sx126x_pkt_params_lora_t *lora_pkt_params =
 		(sx126x_pkt_params_lora_t *)reg_buf;
 
-	sx126x_set_lora_pkt_params(REG_RF_CONTEXT, lora_pkt_params);
+	sx126x_set_lora_pkt_params(RF_CONTEXT, lora_pkt_params);
 
 	settings->preamble_len = lora_pkt_params->preamble_len_in_symb;
 	settings->header_type = lora_pkt_params->header_type;
@@ -201,7 +205,7 @@ int reg_set_lora_symb_nb_timeout_h(UART_HandleTypeDef *huart, settings_t *settin
 
 	const uint8_t lora_symb_timeout = reg_buf[0];
 
-	sx126x_set_lora_symb_nb_timeout(REG_RF_CONTEXT, lora_symb_timeout);
+	sx126x_set_lora_symb_nb_timeout(RF_CONTEXT, lora_symb_timeout);
 
 	settings->lora_symb_timeout = lora_symb_timeout;
 

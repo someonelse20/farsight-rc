@@ -64,8 +64,7 @@ void Error_Handler(void);
 
 #define BUFFER_SIZE 32
 
-// TODO: Figure out what const void *context is.
-// I think it's to allow using multiple radio modules.
+extern const void *RF_CONTEXT;
 
 // uint8_t *buf;
 
