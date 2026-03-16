@@ -40,7 +40,7 @@ The transceiver has an internal regulator and can handle up to 5v input. The UAR
 The transceiver is built on the [Semtech SX1262 driver](https://github.com/Lora-net/sx126x_driver). To communicate with the transceiver a host must first send a register bit and then the data to transmit or receive based on the table below.
 | Address | Name | Description | Input/Output | Size | Note |
 |---------|--------------------------|------------------------------------|--------------|------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 0 | who_am_i | Device ID | O | 1 | Device ID is 176 |
+| 0 | who_am_i | Device ID | O | 1 | Device ID is 126 |
 | 1 | TX | Transmits packet | I | 32 | Packet size must always be 32 bytes. |
 | 2 | RX | Receives packet | O | 32 | Packet size must always be 32 bytes. |
 | 3 | TX_RX | Transmits then receives packet | I/O | 32 | Packet size must always be 32 bytes. |
