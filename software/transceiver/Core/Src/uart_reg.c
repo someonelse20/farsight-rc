@@ -16,7 +16,35 @@ int reg_who_am_i_h(UART_HandleTypeDef *huart, settings_t *settings) {
 }
 
 int reg_tx_h(UART_HandleTypeDef *huart, settings_t *settings) {
-	const uint16_t SIZE = 32;
+	uint8_t size;
+
+	HAL_UART_Receive(huart, &size, 1, UART_TIMEOUT);
+
+	HAL_UART_Receive(huart, reg_buf, size, UART_TIMEOUT);
+
+	sx126x_write_buffer(REG_RF_CONTEXT, 0, reg_buf, size);
+
+	sx126x_set_tx(REG_RF_CONTEXT, 1000);
+
+	return 0;
+}
+
+int reg_rx_h(UART_HandleTypeDef *huart, settings_t *settings) {
+	uint8_t size;
+
+	HAL_UART_Receive(huart, &size, 1, UART_TIMEOUT);
+
+	sx126x_set_rx(REG_RF_CONTEXT, 1000);
+
+	sx126x_read_buffer(REG_RF_CONTEXT, 0, reg_buf, size);
+
+	HAL_UART_Transmit(huart, reg_buf, size, 500);
+
+	return 0;
+}
+
+int reg_tx_set_h(UART_HandleTypeDef *huart, settings_t *settings) {
+	const uint16_t SIZE = settings->payload_len;
 
 	HAL_UART_Receive(huart, reg_buf, SIZE, UART_TIMEOUT);
 
@@ -27,8 +55,8 @@ int reg_tx_h(UART_HandleTypeDef *huart, settings_t *settings) {
 	return 0;
 }
 
-int reg_rx_h(UART_HandleTypeDef *huart, settings_t *settings) {
-	const uint16_t SIZE = 32;
+int reg_rx_set_h(UART_HandleTypeDef *huart, settings_t *settings) {
+	const uint16_t SIZE = settings->payload_len;
 
 	sx126x_set_rx(REG_RF_CONTEXT, 1000);
 
@@ -196,7 +224,9 @@ int (*reg_handle[])(UART_HandleTypeDef *huart, settings_t *settings) = {
 	reg_who_am_i_h,
 	reg_tx_h,
 	reg_rx_h,
-	reg_tx_rx_h,
+	reg_tx_set_h,
+	reg_rx_set_h,
+	// reg_tx_rx_h,
 	reg_sleep_h,
 	reg_wakeup_h,
 	reg_set_all_h,

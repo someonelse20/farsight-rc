@@ -32,6 +32,8 @@ typedef struct settings_s {
 int reg_who_am_i_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_tx_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_rx_h(UART_HandleTypeDef *huart, settings_t *settings);
+int reg_tx_set_h(UART_HandleTypeDef *huart, settings_t *settings);
+int reg_rx_set_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_tx_rx_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_sleep_h(UART_HandleTypeDef *huart, settings_t *settings);
 int reg_wakeup_h(UART_HandleTypeDef *huart, settings_t *settings);
