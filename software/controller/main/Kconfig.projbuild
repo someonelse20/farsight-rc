@@ -1,4 +1,4 @@
-menu "Wifi Configuration"
+menu "Wifi AP Configuration"
 
     config ESP_WIFI_SSID
         string "WiFi SSID"
@@ -37,14 +37,6 @@ menu "Wifi Configuration"
         default 600
         help
             GTK rekeying interval in seconds.
-
-    config EXAMPLE_ENABLE_SSE_HANDLER
-        bool "Enable Server-Sent Events (SSE) handler"
-        default n
-        help
-            Enable this option to use Server-Sent Events (SSE) functionality.
-            This will allow the server to push real-time updates to the client over an HTTP connection.
-
 endmenu
 
 menu "I2C Configuration"

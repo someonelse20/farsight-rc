@@ -18,10 +18,6 @@
 #include "esp_check.h"
 #include <time.h>
 #include <sys/time.h>
-#if !CONFIG_IDF_TARGET_LINUX
-#include <esp_wifi.h>
-#include <esp_system.h>
-#endif  // !CONFIG_IDF_TARGET_LINUX
 
 #include "controller.h"
 #include "http_server.h"
@@ -32,7 +28,7 @@
  * handlers for the web server.
  */
 
-static const char *TAG = "example";
+static const char *TAG = "HTTP Server";
 
 #if CONFIG_EXAMPLE_BASIC_AUTH
 
@@ -316,13 +312,6 @@ httpd_handle_t start_webserver(void)
 {
     httpd_handle_t server = NULL;
     httpd_config_t config = HTTPD_DEFAULT_CONFIG();
-#if CONFIG_IDF_TARGET_LINUX
-    // Setting port as 8001 when building for Linux. Port 80 can be used only by a privileged user in linux.
-    // So when a unprivileged user tries to run the application, it throws bind error and the server is not started.
-    // Port 8001 can be used by an unprivileged user as well. So the application will not throw bind error and the
-    // server will be started.
-    config.server_port = 8001;
-#endif // !CONFIG_IDF_TARGET_LINUX
     config.lru_purge_enable = true;
 
     // Start the httpd server
@@ -371,4 +360,3 @@ void connect_handler(void* arg, esp_event_base_t event_base,
         *server = start_webserver();
     }
 }
-
