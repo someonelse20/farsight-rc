@@ -1,0 +1,74 @@
+menu "Wifi Configuration"
+
+    config ESP_WIFI_SSID
+        string "WiFi SSID"
+        default "myssid"
+        help
+            SSID (network name) for the example to connect to.
+
+    config ESP_WIFI_PASSWORD
+        string "WiFi Password"
+        default "mypassword"
+        help
+            WiFi password (WPA or WPA2) for the example to use.
+    config ESP_WIFI_CHANNEL
+        int "WiFi Channel"
+        range 1 13
+        default 1
+        help
+            WiFi channel (network channel) for the example to use.
+
+    config ESP_MAX_STA_CONN
+        int "Maximal STA connections"
+        default 4
+        help
+            Max number of the STA connects to AP.
+
+    config ESP_GTK_REKEYING_ENABLE
+        bool "Enable GTK Rekeying"
+        default y
+        help
+            Flag to enable GTK rekeying.
+
+    config ESP_GTK_REKEY_INTERVAL
+        int "GTK rekey interval"
+        depends on ESP_GTK_REKEYING_ENABLE
+        range 60 65535
+        default 600
+        help
+            GTK rekeying interval in seconds.
+
+    config EXAMPLE_ENABLE_SSE_HANDLER
+        bool "Enable Server-Sent Events (SSE) handler"
+        default n
+        help
+            Enable this option to use Server-Sent Events (SSE) functionality.
+            This will allow the server to push real-time updates to the client over an HTTP connection.
+
+endmenu
+
+menu "I2C Configuration"
+
+	# orsource "$IDF_PATH/examples/common_components/env_caps/$IDF_TARGET/Kconfig.env_caps"
+
+    config I2C_MASTER_SCL
+        int "SCL GPIO Num"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 4
+        help
+            GPIO number for I2C Master clock line.
+
+    config I2C_MASTER_SDA
+        int "SDA GPIO Num"
+        range ENV_GPIO_RANGE_MIN ENV_GPIO_OUT_RANGE_MAX
+        default 5
+        help
+            GPIO number for I2C Master data line.
+
+    config I2C_MASTER_FREQUENCY
+        int "Master Frequency"
+        default 400000
+        help
+            I2C Speed of Master device.
+
+endmenu
