@@ -1,4 +1,6 @@
 #include "controller.h"
+#include <math.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <ssd1306.h>
 #include "freertos/FreeRTOS.h"
@@ -10,17 +12,29 @@
 #include "driver/i2c_master.h"
 #include "esp_adc/adc_continuous.h"
 
+#include "soc/soc_caps.h"
 #include "softap.h"
 #include "http_server.h"
+
+#define ADC_SAMPLE_LEN 64
 
 static const char *TAG = "Controller Main";
 
 telemetry_t telemetry;
 controls_t controls;
 
+double joy_1_x;
+double joy_1_y;
+double joy_2_x;
+double joy_2_y;
+double bat_v;
+
 static void adc_master_init(adc_continuous_handle_t adc_handle);
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
-static void poll_inputs(void);
+
+static double convert_adc_data(uint32_t raw_data);
+static void poll_adc(adc_continuous_handle_t handle);
+static void poll_buttons(void);
 
 void app_main(void)
 {
@@ -34,7 +48,8 @@ void app_main(void)
 
 	// Start ADC
 	adc_continuous_handle_t adc_handle = NULL;
-	//
+	adc_master_init(adc_handle);
+
 	// Start I2C
 	i2c_master_bus_handle_t i2c0_bus_hdl;
 	i2c_master_dev_handle_t i2c0_dev_hdl;
@@ -65,7 +80,7 @@ void app_main(void)
 	ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
 
 	while (1) {
-	
+
 	}
 }
 
@@ -95,11 +110,31 @@ static void adc_master_init(adc_continuous_handle_t adc_handle) {
 	};
 	ESP_ERROR_CHECK(adc_continuous_new_handle(&adc_handle_config, &adc_handle));
 
-	adc_channel_t adc_channel[7] = {ADC_CHANNEL_0, ADC_CHANNEL_1, ADC_CHANNEL_2, ADC_CHANNEL_3, ADC_CHANNEL_4, ADC_CHANNEL_5};
-
-	adc_continuous_config_t adc_config = {
-		5,
+	adc_channel_t adc_channel[5] = {
+		ADC_CHANNEL_0,
+		ADC_CHANNEL_1,
+		ADC_CHANNEL_2,
+		ADC_CHANNEL_3,
+		ADC_CHANNEL_6
 	};
+
+	adc_continuous_config_t dig_cfg = {
+		.sample_freq_hz = 20 * 1000,
+		.conv_mode = ADC_CONV_SINGLE_UNIT_1,
+	};
+
+	uint8_t channel_num = 5;
+
+	adc_digi_pattern_config_t adc_pattern[SOC_ADC_PATT_LEN_MAX] = {0};
+	dig_cfg.pattern_num = channel_num;
+	for (int i = 0; i < channel_num; i++) {
+		adc_pattern[i].atten = ADC_ATTEN_DB_0;
+		adc_pattern[i].channel = adc_channel[i]; // & 0x7;
+		adc_pattern[i].unit = ADC_UNIT_1;
+		adc_pattern[i].bit_width = SOC_ADC_DIGI_MAX_BITWIDTH;
+	}
+	dig_cfg.adc_pattern = adc_pattern;
+	ESP_ERROR_CHECK(adc_continuous_config(adc_handle, &dig_cfg));
 }
 
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle)
@@ -122,7 +157,25 @@ static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_
 	ESP_ERROR_CHECK(i2c_master_bus_add_device(*bus_handle, &dev_config, dev_handle));
 }
 
-static void poll_inputs(void) {
+static double convert_adc_data(uint32_t raw_data) {
+	return raw_data * 3.3 / pow(2, SOC_ADC_DIGI_MAX_BITWIDTH);
+}
+
+static void poll_adc(adc_continuous_handle_t handle) {
+	adc_continuous_data_t adc_raw_data[ADC_SAMPLE_LEN];
+	uint32_t num_samples = 0;
+
+	esp_err_t ret = adc_continuous_read_parse(handle, adc_raw_data, ADC_SAMPLE_LEN, &num_samples, 50);
+	if (ret == ESP_OK) {
+		joy_1_x = convert_adc_data(adc_raw_data[0].raw_data);
+		joy_1_y = convert_adc_data(adc_raw_data[1].raw_data);
+		joy_2_x = convert_adc_data(adc_raw_data[2].raw_data);
+		joy_2_y = convert_adc_data(adc_raw_data[3].raw_data);
+		bat_v = convert_adc_data(adc_raw_data[4].raw_data);
+	}
+}
+
+static void poll_buttons(void) {
 
 }
 
