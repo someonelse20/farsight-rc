@@ -4,9 +4,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "esp_log.h"
+#include "hal/adc_types.h"
 #include "nvs_flash.h"
 #include "driver/i2c_types.h"
 #include "driver/i2c_master.h"
+#include "esp_adc/adc_continuous.h"
 
 #include "softap.h"
 #include "http_server.h"
@@ -16,12 +18,13 @@ static const char *TAG = "Controller Main";
 telemetry_t telemetry;
 controls_t controls;
 
+static void adc_master_init(adc_continuous_handle_t adc_handle);
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle);
 static void poll_inputs(void);
 
 void app_main(void)
 {
-	//Initialize NVS
+	// Initialize NVS
 	esp_err_t ret = nvs_flash_init();
 	if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
 		ESP_ERROR_CHECK(nvs_flash_erase());
@@ -29,6 +32,9 @@ void app_main(void)
 	}
 	ESP_ERROR_CHECK(ret);
 
+	// Start ADC
+	adc_continuous_handle_t adc_handle = NULL;
+	//
 	// Start I2C
 	i2c_master_bus_handle_t i2c0_bus_hdl;
 	i2c_master_dev_handle_t i2c0_dev_hdl;
@@ -54,6 +60,13 @@ void app_main(void)
 		ESP_LOGE(TAG, "ssd1306 handle init failed");
 		// assert(dev_hdl);
 	}
+
+	// Start ADC measurment
+	ESP_ERROR_CHECK(adc_continuous_start(adc_handle));
+
+	while (1) {
+	
+	}
 }
 
 char* get_telemetry() {
@@ -74,6 +87,21 @@ char* get_telemetry() {
 
 	return result;
 }
+
+static void adc_master_init(adc_continuous_handle_t adc_handle) {
+	adc_continuous_handle_cfg_t adc_handle_config = {
+		.max_store_buf_size = 1024,
+		.conv_frame_size = 256,
+	};
+	ESP_ERROR_CHECK(adc_continuous_new_handle(&adc_handle_config, &adc_handle));
+
+	adc_channel_t adc_channel[7] = {ADC_CHANNEL_0, ADC_CHANNEL_1, ADC_CHANNEL_2, ADC_CHANNEL_3, ADC_CHANNEL_4, ADC_CHANNEL_5};
+
+	adc_continuous_config_t adc_config = {
+		5,
+	};
+}
+
 static void i2c_master_init(i2c_master_bus_handle_t *bus_handle, i2c_master_dev_handle_t *dev_handle)
 {
 	i2c_master_bus_config_t bus_config = {
